@@ -1,0 +1,76 @@
+# parcel.yml
+# yes:    choco, scoop, yum, apt-get, ps-gallery, nuget, win-features, script, brew, docker
+# maybe:  git, npm, yarn, bower (all global)
+
+# PACKAGE [<name> - <version> - <provider>]
+# > [updated|installed|uninstalled]
+
+#needed in classes:
+#
+#[bool] TestProvider()
+#[scriptblock] GetInstallProviderScriptBlock()
+#
+#[string] GetInstallScript()
+#[string] GetUninstallScript()
+#[bool] TestInstalled()
+#[bool] TestUninstalled()
+#[bool] TestExitCode([int]$_code, [string]$_output, [string]$_action)
+
+---
+providers:
+  scoops:
+    sources:
+    - name: my-bucket
+      url: http:/buck.com
+  choco:
+    sources:
+    - name: my-repo
+      url: something
+
+scripts: # pre/post everything
+  pre:
+    install: #script
+    uninstall: #script
+  post:
+    install: #script
+    uninstall: #script
+
+packages:
+- name: 7zip
+  provider: choco #self-install
+  version: 1.6.7
+  source: custom-source
+  pre:
+    install: #script
+    uninstall: #script
+  post:
+    install: #script
+    uninstall: #script
+
+- name: 7zip
+  provider: scoop # < self-install the provider
+  version: 1.6.7
+
+- name: 7zip
+  provider: auto # < this will choose the best provider based on the os
+  version: 1.6.7
+
+- name: 7zip
+  provider: script
+  script: |
+    sudo yum install zip
+  os: linux
+  when: ($parcel.os -ieq 'linux')
+
+- name: 7zip
+  provider: yum #only on linux  -   also supports: apt-get
+
+- name: pester
+  provider: psgallery
+  version: 5.1.0
+  environment: dev
+
+- name: pester
+  provider: psgallery
+  version: 5.1.0
+  source: private-gallery
