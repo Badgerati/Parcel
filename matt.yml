@@ -1,0 +1,14 @@
+---
+packages:
+- name: 7zip.install
+  provider: choco
+  version: 18.5.0.20180730
+
+
+
+
+#---
+#packages:
+#- name: microsoft/powershell
+#  provider: docker
+#  version: 6.2.3-ubuntu.16.03

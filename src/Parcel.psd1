@@ -28,9 +28,6 @@
     # Minimum version of the Windows PowerShell engine required by this module
     PowerShellVersion = '5.0'
 
-    # Functions to export from this Module
-    #FunctionsToExport = @()
-
     # Scripts to run prior to loading the module
     ScriptsToProcess = @("ParcelLoad.ps1")
 

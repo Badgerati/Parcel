@@ -1,9 +1,13 @@
-function ConvertTo-ParcelProviders
+function ConvertTo-ParcelPackages
 {
     param(
         [Parameter()]
         [hashtable[]]
-        $Packages
+        $Packages,
+
+        [Parameter(Mandatory=$true)]
+        [hashtable]
+        $Context
     )
 
     # do nothing if there are no packages
@@ -14,42 +18,36 @@ function ConvertTo-ParcelProviders
 
     # convert each package to a parcel provider
     $Packages | ForEach-Object {
-        ConvertTo-ParcelProvider -Package $_
+        ConvertTo-ParcelPackage -Package $_ -Context $Context
     }
 }
 
-function ConvertTo-ParcelProvider
+function ConvertTo-ParcelPackage
 {
     param(
         [Parameter(Mandatory=$true)]
         [hashtable]
-        $Package
+        $Package,
+
+        [Parameter(Mandatory=$true)]
+        [hashtable]
+        $Context
     )
 
     if ([string]::IsNullOrEmpty($Package.provider)) {
         throw "Package provider is mandatory for $($Package.name)"
     }
 
-    switch ($Package.provider.ToLowerInvariant()) {
-        'choco' {
-            return [ChocoParcelProvider]::new($Package)
-        }
+    $_package = [ParcelPackage]::new($Package)
 
-        'psgallery' {
-            return [PSGalleryParcelProvider]::new($Package)
-        }
-
-        'scoop' {
-            return [ScoopParcelProvider]::new($Package)
-        }
-
-        default {
-            throw "Invalid package provider supplied: $($Package.provider)"
-        }
+    if ($null -eq $_package.TestPackage($Context)) {
+        [ParcelFactory]::Instance().AddProvider($_package.ProviderName)
     }
+
+    return $_package
 }
 
-function Write-ParcelHeader
+function Write-ParcelPackageHeader
 {
     param(
         [Parameter(ParameterSetName='Message')]
@@ -57,12 +55,16 @@ function Write-ParcelHeader
         $Message = [string]::Empty,
 
         [Parameter(ParameterSetName='Package')]
+        [ParcelPackage]
+        $Package,
+
+        [Parameter(ParameterSetName='Package')]
         [ParcelProvider]
-        $Package
+        $Provider
     )
 
     if ($PSCmdlet.ParameterSetName -ieq 'package') {
-        $Message = $Package.GetHeaderMessage()
+        $Message = $Provider.GetPackageHeaderMessage($Package)
     }
 
     $dashes = ('-' * (80 - $Message.Length))
@@ -143,12 +145,12 @@ function Invoke-ParcelPackages
         $Action,
 
         [Parameter(Mandatory=$true)]
-        [ParcelProvider[]]
+        [ParcelPackage[]]
         $Packages,
 
-        [Parameter()]
-        [string]
-        $Environment,
+        [Parameter(Mandatory=$true)]
+        [hashtable]
+        $Context,
 
         [switch]
         $IgnoreEnsures
@@ -157,11 +159,7 @@ function Invoke-ParcelPackages
     Write-Host ([string]::Empty)
     $start = [datetime]::Now
 
-    # get the parcel context
-    $parcel = Get-ParcelContext -Environment $Environment
-
-    # map of which providers are installed, and general stats
-    $providers = @{}
+    # stats of what's installed etc
     $stats = @{
         Install = 0
         Uninstall = 0
@@ -169,26 +167,18 @@ function Invoke-ParcelPackages
     }
 
     # check if we need to install any providers
-    foreach ($package in $Packages) {
-        if (!$providers[$package.Provider]) {
-            if (($null -eq $package.TestPackage($parcel)) -and !$package.TestProvider()) {
-                Write-ParcelHeader -Message "$($package.ProviderName) [Provider]"
-                $result = $package.InstallProvider()
-                $result.WriteStatusMessage()
-                $stats.Install++
-                Write-Host ([string]::Empty)
-            }
-
-            $providers[$package.Provider] = $true
-        }
-    }
+    $stats.Install += [ParcelFactory]::Instance().InstallProviders()
 
     # attempt to install/uninstall each package
     foreach ($package in $Packages) {
-        Write-ParcelHeader -Package $package
+        # get the provider
+        $provider = [ParcelFactory]::Instance().GetProvider($package.ProviderName)
+
+        # write out the strap line
+        Write-ParcelPackageHeader -Package $package -Provider $provider
 
         # set parcel context for package
-        $parcel.package.provider = $package.Provider
+        $Context.package.provider = $package.ProviderName
         $_action = $Action
 
         # skip any package with a specific ensure type
@@ -198,26 +188,27 @@ function Invoke-ParcelPackages
 
         # install or uninstall?
         else {
+            # loop and retry to action the package
             foreach ($i in 1..3) {
                 try {
                     switch ($Action.ToLowerInvariant()) {
                         'install' {
                             if (@('neutral', 'present') -icontains $package.Ensure) {
-                                $result = $package.Install($parcel)
+                                $result = $provider.Install($package, $Context)
                             }
                             else {
                                 $_action = 'uninstall'
-                                $result = $package.Uninstall($parcel)
+                                $result = $provider.Uninstall($package, $Context)
                             }
                         }
 
                         'uninstall' {
                             if (@('neutral', 'absent') -icontains $package.Ensure) {
-                                $result = $package.Uninstall($parcel)
+                                $result = $provider.Uninstall($package, $Context)
                             }
                             else {
                                 $_action = 'install'
-                                $result = $package.Install($parcel)
+                                $result = $provider.Install($package, $Context)
                             }
                         }
                     }

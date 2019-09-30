@@ -25,8 +25,10 @@ function Install-ParcelPackages
     }
 
     $config = ConvertFrom-ParcelYaml -Path $Path
-    $packages = ConvertTo-ParcelProviders -Packages $config.packages
-    Invoke-ParcelPackages -Action Install -Packages $packages -Environment $Environment -IgnoreEnsures:$IgnoreEnsures
+
+    $context = Get-ParcelContext -Environment $Environment
+    $packages = ConvertTo-ParcelPackages -Packages $config.packages -Context $context
+    Invoke-ParcelPackages -Action Install -Packages $packages -Context $context -IgnoreEnsures:$IgnoreEnsures
 }
 
 function Uninstall-ParcelPackages
@@ -56,6 +58,8 @@ function Uninstall-ParcelPackages
     }
 
     $config = ConvertFrom-ParcelYaml -Path $Path
-    $packages = ConvertTo-ParcelProviders -Packages $config.packages
-    Invoke-ParcelPackages -Action Uninstall -Packages $packages -Environment $Environment -IgnoreEnsures:$IgnoreEnsures
+
+    $context = Get-ParcelContext -Environment $Environment
+    $packages = ConvertTo-ParcelPackages -Packages $config.packages -Context $context
+    Invoke-ParcelPackages -Action Uninstall -Packages $packages -Context $context -IgnoreEnsures:$IgnoreEnsures
 }
