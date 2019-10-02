@@ -18,7 +18,7 @@ class ScoopParcelProvider : ParcelProvider
 
     [string] GetPackageInstallScript([ParcelPackage]$_package)
     {
-        return "scoop install $($_package.Name)$($this.GetVersionArgument($_package, $true))"
+        return "scoop install $($_package.Name)@$($this.GetVersionArgument($_package))"
     }
 
     [string] GetPackageUninstallScript([ParcelPackage]$_package)
@@ -29,7 +29,7 @@ class ScoopParcelProvider : ParcelProvider
     [bool] TestPackageInstalled([ParcelPackage]$_package)
     {
         $result = Invoke-ParcelPowershell -Command "scoop list $($_package.Name)"
-        $result = ($result -imatch "^\s*$($_package.Name)\s+$($this.GetVersionArgument($_package, $false))")
+        $result = ($result -imatch "^\s*$($_package.Name)\s+$($this.GetVersionArgument($_package))")
         return ((@($result) -imatch "^\s*$($_package.Name)\s+[0-9\.]+").Length -gt 0)
     }
 
@@ -39,18 +39,13 @@ class ScoopParcelProvider : ParcelProvider
         return ((@($result) -imatch "^\s*$($_package.Name)\s+[0-9\.]+").Length -eq 0)
     }
 
-    [string] GetVersionArgument([ParcelPackage]$_package, [bool]$_withAt)
+    [string] GetVersionArgument([ParcelPackage]$_package)
     {
         if ([string]::IsNullOrWhiteSpace($_package.Version) -or ($_package.Version -ieq 'latest')) {
             return [string]::Empty
         }
 
-        $_version = $_package.Version
-        if ($_withAt) {
-            $_version = "@$($_version)"
-        }
-
-        return $_version
+        return $_package.Version
     }
 
     #TODO: "source" support (buckets in this case)

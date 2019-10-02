@@ -53,10 +53,26 @@ The properties that are currently supported are:
 * name
 * provider
 * version (currently has to be provided - cannot be empty or latest)
+* source (can be a url, or a repository name, or any other source)
+* args (extra arguments to run, can also be split into `install:` and `uninstall:`)
 * ensure (can be empty, or present/absent)
 * os (can be windows, linux, or macos - package will only run if running on that OS)
 * environment (can be anything, default is 'none'. packages will run based on `-Environment`)
 * when (powershell script that returns a boolean value, if true then package will run)
+
+```yaml
+---
+packages:
+- name: <some-name>
+  provider: <provider>
+  version: <version>
+  source: <source>
+  args: <arguments>
+  ensure: <present|absent>
+  os: <linux|macos|windows|all>
+  environment: <environment>
+  when: <powershell-query>
+```
 
 For `when`, there is a `$parcel` object available that has the following structure:
 
