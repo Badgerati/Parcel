@@ -1,6 +1,3 @@
-# using class Providers.ParcelProvider
-# using class ParcelPackage
-
 class ScoopParcelProvider : ParcelProvider
 {
     ScoopParcelProvider([hashtable]$package) : base('Scoop', 'Windows', $true) {}

@@ -7,6 +7,7 @@ $classes = @(
     "$($root)/Classes/Enums/ParcelStatusType.ps1",
     "$($root)/Classes/ParcelStatus.ps1",
     "$($root)/Classes/ParcelScripts.ps1",
+    "$($root)/Classes/ParcelArguments.ps1",
     "$($root)/Classes/ParcelPackage.ps1",
     "$($root)/Classes/Providers/ParcelProvider.ps1",
     "$($root)/Classes/Providers/ChocoProvider.ps1",

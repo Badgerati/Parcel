@@ -1,8 +1,3 @@
-# using class Providers.ParcelProvider
-# using class Providers.ChocoProvider
-# using class Providers.ScoopProvider
-# using class Providers.PSGalleryProvider
-
 class ParcelFactory
 {
     hidden [hashtable] $Providers

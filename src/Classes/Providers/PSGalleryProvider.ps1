@@ -1,6 +1,3 @@
-# using class Providers.ParcelProvider
-# using class ParcelPackage
-
 class PSGalleryParcelProvider : ParcelProvider
 {
     PSGalleryParcelProvider([hashtable]$package) : base('PowerShell Gallery', 'All', $false) {}
