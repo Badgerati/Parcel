@@ -2,11 +2,13 @@
 
 > I'm still working on this currently.
 
-Parcel is a cross-platform PowerShell Package Manager for a number of different Package Managers.
+Parcel is a cross-platform PowerShell package manager and provisioner for a number of different package managers.
 
 You define a package file using YAML, and Parcel will install/uninstall the packages using the relevant provider.
 
 ## Support Providers
+
+These are the currently support package providers (more to come!):
 
 * Chocolatey
 * PowerShell Gallery
@@ -59,6 +61,7 @@ The properties that are currently supported are:
 * os (can be windows, linux, or macos - package will only run if running on that OS)
 * environment (can be anything, default is 'none'. packages will run based on `-Environment`)
 * when (powershell script that returns a boolean value, if true then package will run)
+* pre/post scritps (allows you to define powershell scripts to run pre/post install/uninstall)
 
 ```yaml
 ---
@@ -67,11 +70,19 @@ packages:
   provider: <provider>
   version: <version>
   source: <source>
-  args: <arguments>
-  ensure: <present|absent>
-  os: <linux|macos|windows|all>
+  args:
+    install: <custom-install-arguments>
+    uninstall: <custom-uninstall-arguments>
+  ensure: <present|absent|neutral (default)>
+  os: <linux|macos|windows|all (default)>
   environment: <environment>
   when: <powershell-query>
+  pre:
+    install: <powershell-script>
+    uninstall: <powershell-script>
+  post:
+    install: <powershell-script>
+    uninstall: <powershell-script>
 ```
 
 For `when`, there is a `$parcel` object available that has the following structure:
