@@ -1,15 +1,10 @@
-# using class ParcelStatus
-# using class ParcelScripts
-# using enum Enums.ParcelEnsureType
-# using enum Enums.ParcelOSType
-
 class ParcelPackage
 {
     [string] $Name
     [string] $ProviderName
     [string] $Version
     [string] $Source
-    [string] $Arguments
+    [ParcelArguments] $Arguments
 
     [ParcelEnsureType] $Ensure
     [string] $When
@@ -57,7 +52,16 @@ class ParcelPackage
         $this.Version = $package.version
         $this.ProviderName = $package.provider
         $this.Source = $package.source
-        $this.Arguments = $package.args
+
+        if ([string]::IsNullOrWhiteSpace($package.args)) {
+            $this.Arguments = [ParcelArguments]::new()
+        }
+        elseif ($package.args -is [string]) {
+            $this.Arguments = [ParcelArguments]::new($package.args)
+        }
+        else {
+            $this.Arguments = [ParcelArguments]::new($package.args.install, $package.args.uninstall)
+        }
 
         $this.Ensure = [ParcelEnsureType]$package.ensure
         $this.OS = $package.os

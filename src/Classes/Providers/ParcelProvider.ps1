@@ -1,7 +1,3 @@
-# using class ParcelPackage
-# using class ParcelStatus
-# using enum Enums.ParcelOSType
-
 class ParcelProvider
 {
     [ParcelOSType] $OS
@@ -51,6 +47,9 @@ class ParcelProvider
 
         try {
             $script = $this.GetPackageInstallScript($_package)
+            $script += " $($_package.Arguments.Install)"
+
+            Write-Verbose $script
 
             if ($this.RunAsPowerShell) {
                 $script += '; if (!$? -or ($LASTEXITCODE -ne 0)) { throw }'
@@ -97,6 +96,9 @@ class ParcelProvider
 
         try {
             $script = $this.GetPackageUninstallScript($_package)
+            $script += " $($_package.Arguments.Uninstall)"
+
+            Write-Verbose $script
 
             if ($this.RunAsPowerShell) {
                 $script += '; if (!$? -or ($LASTEXITCODE -ne 0)) { throw }'

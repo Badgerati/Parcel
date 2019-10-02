@@ -1,5 +1,3 @@
-# using enum Enums.ParcelStatusType
-
 class ParcelStatus
 {
     [ParcelStatusType] $Status
