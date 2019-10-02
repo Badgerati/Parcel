@@ -21,7 +21,7 @@ class ChocoParcelProvider : ParcelProvider
 
     [string] GetPackageInstallScript([ParcelPackage]$_package)
     {
-        return "choco install $($_package.Name) $($this.GetVersionArgument($_package)) --no-progress -y -f --allow-unofficial --allow-downgrade"
+        return "choco install $($_package.Name) --no-progress -y -f --allow-unofficial --allow-downgrade"
     }
 
     [string] GetPackageUninstallScript([ParcelPackage]$_package)
@@ -69,6 +69,15 @@ class ChocoParcelProvider : ParcelProvider
         }
 
         return "--version $($_package.Version)"
+    }
+
+    [string] GetSourceArgument([ParcelPackage]$_package)
+    {
+        if ([string]::IsNullOrWhiteSpace($_package.Source)) {
+            return [string]::Empty
+        }
+
+        return "--source $($_package.Source)"
     }
 
     #TODO: Source

@@ -20,7 +20,7 @@ class PSGalleryParcelProvider : ParcelProvider
 
     [string] GetPackageInstallScript([ParcelPackage]$_package)
     {
-        return "Install-Module -Name $($_package.Name) -Force $($this.GetVersionArgument($_package)) -AllowClobber -SkipPublisherCheck -ErrorAction Stop"
+        return "Install-Module -Name $($_package.Name) -Force -AllowClobber -SkipPublisherCheck -ErrorAction Stop"
     }
 
     [string] GetPackageUninstallScript([ParcelPackage]$_package)
@@ -41,6 +41,15 @@ class PSGalleryParcelProvider : ParcelProvider
         }
 
         return "-RequiredVersion $($_package.Version)"
+    }
+
+    [string] GetSourceArgument([ParcelPackage]$_package)
+    {
+        if ([string]::IsNullOrWhiteSpace($_package.Source)) {
+            return [string]::Empty
+        }
+
+        return "-Repository $($_package.Source)"
     }
 
     #TODO: Source (repository)

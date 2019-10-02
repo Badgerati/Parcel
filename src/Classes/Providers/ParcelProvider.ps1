@@ -46,17 +46,28 @@ class ParcelProvider
         $output = [string]::Empty
 
         try {
-            $script = $this.GetPackageInstallScript($_package)
-            $script += " $($_package.Arguments.Install)"
+            # get install script - adding args, version and source
+            $_script = $this.GetPackageInstallScript($_package)
+            $_script += " $($_package.Arguments.Install)"
 
-            Write-Verbose $script
+            $_version = $this.GetVersionArgument($_package)
+            if (![string]::IsNullOrWhiteSpace($_version) -and !$_script.Contains($_version)) {
+                $_script += " $($_version)"
+            }
+
+            $_source = $this.GetSourceArgument($_package)
+            if (![string]::IsNullOrWhiteSpace($_source) -and !$_script.Contains($_source)) {
+                $_script += " $($_source)"
+            }
+
+            Write-Verbose $_script
 
             if ($this.RunAsPowerShell) {
-                $script += '; if (!$? -or ($LASTEXITCODE -ne 0)) { throw }'
-                $output = Invoke-ParcelPowershell -Command $script
+                $_script += '; if (!$? -or ($LASTEXITCODE -ne 0)) { throw }'
+                $output = Invoke-ParcelPowershell -Command $_script
             }
             else {
-                $output = Invoke-Expression -Command $script -ErrorAction Stop
+                $output = Invoke-Expression -Command $_script -ErrorAction Stop
             }
 
             if (!$this.TestExitCode($LASTEXITCODE, $output, 'install')) {
@@ -95,17 +106,18 @@ class ParcelProvider
         $output = [string]::Empty
 
         try {
-            $script = $this.GetPackageUninstallScript($_package)
-            $script += " $($_package.Arguments.Uninstall)"
+            # get uninstall script - adding args
+            $_script = $this.GetPackageUninstallScript($_package)
+            $_script += " $($_package.Arguments.Uninstall)"
 
-            Write-Verbose $script
+            Write-Verbose $_script
 
             if ($this.RunAsPowerShell) {
-                $script += '; if (!$? -or ($LASTEXITCODE -ne 0)) { throw }'
-                $output = Invoke-ParcelPowershell -Command $script
+                $_script += '; if (!$? -or ($LASTEXITCODE -ne 0)) { throw }'
+                $output = Invoke-ParcelPowershell -Command $_script
             }
             else {
-                $output = Invoke-Expression -Command $script -ErrorAction Stop
+                $output = Invoke-Expression -Command $_script -ErrorAction Stop
             }
 
             if (!$this.TestExitCode($LASTEXITCODE, $output, 'uninstall')) {
@@ -144,6 +156,16 @@ class ParcelProvider
     [bool] TestProviderInstalled()
     {
         return $true
+    }
+
+    [string] GetVersionArgument([ParcelPackage]$_package)
+    {
+        return [string]::Empty
+    }
+
+    [string] GetSourceArgument([ParcelPackage]$_package)
+    {
+        return [string]::Empty
     }
 
     [scriptblock] GetProviderInstallScriptBlock() { throw [System.NotImplementedException]::new() }
