@@ -34,7 +34,7 @@ class ParcelFactory
         $this.Providers[$_name] = $_provider
     }
 
-    [int] InstallProviders()
+    [int] InstallProviders([bool]$_dryRun)
     {
         $_installed = 0
 
@@ -48,8 +48,8 @@ class ParcelFactory
 
             Write-ParcelPackageHeader -Message "$($_provider.Name) [Provider]"
 
-            $result = $_provider.InstallProvider()
-            $result.WriteStatusMessage()
+            $result = $_provider.InstallProvider($_dryRun)
+            $result.WriteStatusMessage($_dryRun)
             $_installed++
 
             Write-Host ([string]::Empty)

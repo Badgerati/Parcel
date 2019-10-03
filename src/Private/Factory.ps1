@@ -185,7 +185,7 @@ function Invoke-ParcelPackages
     }
 
     # check if we need to install any providers
-    $stats.Install += [ParcelFactory]::Instance().InstallProviders()
+    $stats.Install += [ParcelFactory]::Instance().InstallProviders($WhatIf)
 
     # invoke any global pre install/uninstall
     Invoke-ParcelGlobalScript -Action $Action -Stage Pre -WhatIf:$WhatIf

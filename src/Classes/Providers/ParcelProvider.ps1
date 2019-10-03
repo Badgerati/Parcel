@@ -17,10 +17,12 @@ class ParcelProvider
     }
 
     # implemented base functions
-    [ParcelStatus] InstallProvider()
+    [ParcelStatus] InstallProvider([bool]$_dryRun)
     {
         # get the scriptblock and invoke it
-        Invoke-Command -ScriptBlock ($this.GetInstallProviderScriptBlock()) -ErrorAction Stop | Out-Null
+        if (!$_dryRun) {
+            Invoke-Command -ScriptBlock ($this.GetInstallProviderScriptBlock()) -ErrorAction Stop | Out-Null
+        }
 
         # changed
         return [ParcelStatus]::new('Changed')
