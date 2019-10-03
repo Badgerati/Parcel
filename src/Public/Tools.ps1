@@ -15,7 +15,7 @@ function Install-ParcelPackages
     )
 
     if (!(Test-ParcelAdminUser)) {
-        throw 'Parcel needs to be run as add Administrator'
+        throw 'Parcel needs to be run as an Administrator'
     }
 
     if ([string]::IsNullOrWhiteSpace($Path)) {
@@ -51,7 +51,7 @@ function Uninstall-ParcelPackages
     )
 
     if (!(Test-ParcelAdminUser)) {
-        throw 'Parcel needs to be run as add Administrator'
+        throw 'Parcel needs to be run as an Administrator'
     }
 
     if ([string]::IsNullOrWhiteSpace($Path)) {
