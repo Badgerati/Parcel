@@ -40,7 +40,7 @@ class ParcelProvider
         }
 
         # run any pre-install scripts
-        $_package.PreScripts.Install()
+        $_package.Scripts.PreInstall()
 
         # attempt to install
         $output = [string]::Empty
@@ -80,7 +80,7 @@ class ParcelProvider
         }
 
         # run any pre-install scripts
-        $_package.PostScripts.Install()
+        $_package.Scripts.PostInstall()
 
         # state we have changed something
         return [ParcelStatus]::new('Changed')
@@ -100,7 +100,7 @@ class ParcelProvider
         }
 
         # run any pre-install scripts
-        $_package.PreScripts.Uninstall()
+        $_package.Scripts.PreUninstall()
 
         # attempt to uninstall
         $output = [string]::Empty
@@ -130,7 +130,7 @@ class ParcelProvider
         }
 
         # run any pre-install scripts
-        $_package.PostScripts.Uninstall()
+        $_package.Scripts.PostUninstall()
 
         # state we have changed something
         return [ParcelStatus]::new('Changed')

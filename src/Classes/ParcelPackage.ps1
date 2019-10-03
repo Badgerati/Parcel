@@ -11,8 +11,7 @@ class ParcelPackage
     [string] $Environment
     [ParcelOSType] $OS
 
-    [ParcelScripts] $PreScripts
-    [ParcelScripts] $PostScripts
+    [ParcelScripts] $Scripts
 
     # base constructor
     ParcelPackage([hashtable]$package)
@@ -52,16 +51,7 @@ class ParcelPackage
         $this.Version = $package.version
         $this.ProviderName = $package.provider
         $this.Source = $package.source
-
-        if ([string]::IsNullOrWhiteSpace($package.args)) {
-            $this.Arguments = [ParcelArguments]::new()
-        }
-        elseif ($package.args -is [string]) {
-            $this.Arguments = [ParcelArguments]::new($package.args)
-        }
-        else {
-            $this.Arguments = [ParcelArguments]::new($package.args.install, $package.args.uninstall)
-        }
+        $this.Arguments = [ParcelArguments]::new($package.args)
 
         $this.Ensure = [ParcelEnsureType]$package.ensure
         $this.OS = $package.os
@@ -69,8 +59,7 @@ class ParcelPackage
         $this.When = $package.when
 
         # set the scripts
-        $this.PreScripts = [ParcelScripts]::new($package.pre.install, $package.pre.uninstall)
-        $this.PostScripts = [ParcelScripts]::new($package.post.install, $package.post.uninstall)
+        $this.Scripts = [ParcelScripts]::new($package.pre, $package.post)
     }
 
     [ParcelStatus] TestPackage([hashtable]$_context)

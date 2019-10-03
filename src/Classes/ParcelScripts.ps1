@@ -1,22 +1,52 @@
 class ParcelScripts
 {
-    hidden [string] $InstallScript
-    hidden [string] $UninstallScript
+    hidden [string] $PreInstallScript
+    hidden [string] $PreUninstallScript
 
-    ParcelScripts([string]$_install, [string]$_uninstall)
+    hidden [string] $PostInstallScript
+    hidden [string] $PostUninstallScript
+
+    ParcelScripts([object]$_pre, [object]$_post)
     {
-        $this.InstallScript = $_install
-        $this.UninstallScript = $_uninstall
+        # pre scripts
+        if ($_pre -is [string]) {
+            $this.PreInstallScript = $_pre
+            $this.PreUninstallScript = $_pre
+        }
+        else {
+            $this.PreInstallScript = $_pre.install
+            $this.PreUninstallScript = $_pre.uninstall
+        }
+
+        # post scripts
+        if ($_post -is [string]) {
+            $this.PostInstallScript = $_post
+            $this.PostUninstallScript = $_post
+        }
+        else {
+            $this.PostInstallScript = $_post.install
+            $this.PostUninstallScript = $_post.uninstall
+        }
     }
 
-    [void] Install()
+    [void] PreInstall()
     {
-        $this.InvokeScript($this.InstallScript) | Out-Null
+        $this.InvokeScript($this.PreInstallScript) | Out-Null
     }
 
-    [void] Uninstall()
+    [void] PostInstall()
     {
-        $this.InvokeScript($this.UninstallScript) | Out-Null
+        $this.InvokeScript($this.PostInstallScript) | Out-Null
+    }
+
+    [void] PreUninstall()
+    {
+        $this.InvokeScript($this.PreUninstallScript) | Out-Null
+    }
+
+    [void] PostUninstall()
+    {
+        $this.InvokeScript($this.PostUninstallScript) | Out-Null
     }
 
     hidden [void] InvokeScript([string]$_script)
