@@ -50,7 +50,7 @@ packages:
 
 ### Properties
 
-The properties that are currently supported are:
+The properties that are currently supported are in packages are:
 
 * name
 * provider
@@ -62,6 +62,8 @@ The properties that are currently supported are:
 * environment (can be anything, default is 'none'. packages will run based on `-Environment`)
 * when (powershell script that returns a boolean value, if true then package will run)
 * pre/post scritps (allows you to define powershell scripts to run pre/post install/uninstall)
+
+There is also a scripts block that allows for defining pre/post scripts that run before or after all packages. They will run once at the beginning, and then once at the end.
 
 ```yaml
 ---
@@ -77,6 +79,14 @@ packages:
   os: <linux|macos|windows|all (default)>
   environment: <environment>
   when: <powershell-query>
+  pre:
+    install: <powershell-script>
+    uninstall: <powershell-script>
+  post:
+    install: <powershell-script>
+    uninstall: <powershell-script>
+
+scripts:
   pre:
     install: <powershell-script>
     uninstall: <powershell-script>
