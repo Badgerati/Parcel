@@ -10,9 +10,10 @@ You define a package file using YAML, and Parcel will install/uninstall the pack
 
 These are the currently support package providers (more to come!):
 
-* Chocolatey
-* PowerShell Gallery
-* Scoop
+* Chocolatey (choco)
+* PowerShell Gallery (psgallery)
+* Scoop (scoop)
+* More to come, like brew, yum, docker, etc.
 
 ## Usage
 
@@ -69,7 +70,7 @@ There is also a scripts block that allows for defining pre/post scripts that run
 ---
 packages:
 - name: <some-name>
-  provider: <provider>
+  provider: <choco|scoop|psgallery>
   version: <version|empty|latest>
   source: <source>
   args:
