@@ -3,21 +3,15 @@ class ParcelArguments
     [string] $Install
     [string] $Uninstall
 
-    ParcelArguments()
+    ParcelArguments([object]$_args)
     {
-        $this.Install = [string]::Empty
-        $this.Uninstall = [string]::Empty
-    }
-
-    ParcelArguments([string]$_script)
-    {
-        $this.Install = $_script
-        $this.Uninstall = $_script
-    }
-
-    ParcelArguments([string]$_install, [string]$_uninstall)
-    {
-        $this.Install = $_install
-        $this.Uninstall = $_uninstall
+        if ($_args -is [string]) {
+            $this.Install = $_args
+            $this.Uninstall = $_args
+        }
+        else {
+            $this.Install = $_args.install
+            $this.Uninstall = $_args.uninstall
+        }
     }
 }

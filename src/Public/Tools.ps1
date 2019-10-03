@@ -14,7 +14,9 @@ function Install-ParcelPackages
         $IgnoreEnsures
     )
 
-    #TODO: test if admin user
+    if (!(Test-ParcelAdminUser)) {
+        throw 'Parcel needs to be run as an Administrator'
+    }
 
     if ([string]::IsNullOrWhiteSpace($Path)) {
         $Path = './parcel.yml'
@@ -28,7 +30,8 @@ function Install-ParcelPackages
 
     $context = Get-ParcelContext -Environment $Environment
     $packages = ConvertTo-ParcelPackages -Packages $config.packages -Context $context
-    Invoke-ParcelPackages -Action Install -Packages $packages -Context $context -IgnoreEnsures:$IgnoreEnsures
+    $scripts = ConvertTo-ParcelScripts -Scripts $config.scripts
+    Invoke-ParcelPackages -Action Install -Packages $packages -Scripts $scripts -Context $context -IgnoreEnsures:$IgnoreEnsures
 }
 
 function Uninstall-ParcelPackages
@@ -47,7 +50,9 @@ function Uninstall-ParcelPackages
         $IgnoreEnsures
     )
 
-    #TODO: test if admin user
+    if (!(Test-ParcelAdminUser)) {
+        throw 'Parcel needs to be run as an Administrator'
+    }
 
     if ([string]::IsNullOrWhiteSpace($Path)) {
         $Path = './parcel.yml'
@@ -61,5 +66,6 @@ function Uninstall-ParcelPackages
 
     $context = Get-ParcelContext -Environment $Environment
     $packages = ConvertTo-ParcelPackages -Packages $config.packages -Context $context
-    Invoke-ParcelPackages -Action Uninstall -Packages $packages -Context $context -IgnoreEnsures:$IgnoreEnsures
+    $scripts = ConvertTo-ParcelScripts -Scripts $config.scripts
+    Invoke-ParcelPackages -Action Uninstall -Packages $packages -Scripts $scripts -Context $context -IgnoreEnsures:$IgnoreEnsures
 }

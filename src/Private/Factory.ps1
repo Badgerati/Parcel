@@ -1,3 +1,14 @@
+function ConvertTo-ParcelScripts
+{
+    param(
+        [Parameter()]
+        [hashtable[]]
+        $Scripts
+    )
+
+    return [ParcelScripts]::new($Scripts.pre, $Scripts.post)
+}
+
 function ConvertTo-ParcelPackages
 {
     param(
@@ -149,6 +160,10 @@ function Invoke-ParcelPackages
         $Packages,
 
         [Parameter(Mandatory=$true)]
+        [ParcelScripts]
+        $Scripts,
+
+        [Parameter(Mandatory=$true)]
         [hashtable]
         $Context,
 
@@ -168,6 +183,17 @@ function Invoke-ParcelPackages
 
     # check if we need to install any providers
     $stats.Install += [ParcelFactory]::Instance().InstallProviders()
+
+    # invoke any global pre install/uninstall
+    switch ($Action.ToLowerInvariant()) {
+        'install' {
+            $Scripts.PreInstall()
+        }
+
+        'uninstall' {
+            $Scripts.PreUninstall()
+        }
+    }
 
     # attempt to install/uninstall each package
     foreach ($package in $Packages) {
@@ -240,6 +266,17 @@ function Invoke-ParcelPackages
         # refresh the environment and path
         Update-ParcelEnvironmentVariables
         Update-ParcelEnvironmentPath
+    }
+
+    # invoke any global post install/uninstall
+    switch ($Action.ToLowerInvariant()) {
+        'install' {
+            $Scripts.PostInstall()
+        }
+
+        'uninstall' {
+            $Scripts.PostUninstall()
+        }
     }
 
     # write out the stats
@@ -316,5 +353,27 @@ function Update-ParcelEnvironmentVariables
         foreach ($var in (Get-ParcelEnvironmentVariables -Scope $scope)) {
             Set-Item "Env:$($var)" -Value (Get-ParcelEnvironmentVariable -Name $var -Scope $scope) -Force
         }
+    }
+}
+
+function Test-ParcelAdminUser
+{
+    # check the current platform, if it's unix then return true
+    if ($PSVersionTable.Platform -ieq 'unix') {
+        return $true
+    }
+
+    try {
+        $principal = New-Object System.Security.Principal.WindowsPrincipal([System.Security.Principal.WindowsIdentity]::GetCurrent())
+        if ($null -eq $principal) {
+            return $false
+        }
+
+        return $principal.IsInRole([System.Security.Principal.WindowsBuiltInRole]::Administrator)
+    }
+    catch [exception] {
+        Write-Host 'Error checking user administrator privileges' -ForegroundColor Red
+        Write-Host $_.Exception.Message -ForegroundColor Red
+        return $false
     }
 }
