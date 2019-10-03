@@ -29,28 +29,32 @@ class ParcelScripts
         }
     }
 
-    [void] PreInstall()
+    [void] PreInstall([bool]$_dryRun)
     {
-        $this.InvokeScript($this.PreInstallScript) | Out-Null
+        $this.InvokeScript($this.PreInstallScript, $_dryRun) | Out-Null
     }
 
-    [void] PostInstall()
+    [void] PostInstall([bool]$_dryRun)
     {
-        $this.InvokeScript($this.PostInstallScript) | Out-Null
+        $this.InvokeScript($this.PostInstallScript, $_dryRun) | Out-Null
     }
 
-    [void] PreUninstall()
+    [void] PreUninstall([bool]$_dryRun)
     {
-        $this.InvokeScript($this.PreUninstallScript) | Out-Null
+        $this.InvokeScript($this.PreUninstallScript, $_dryRun) | Out-Null
     }
 
-    [void] PostUninstall()
+    [void] PostUninstall([bool]$_dryRun)
     {
-        $this.InvokeScript($this.PostUninstallScript) | Out-Null
+        $this.InvokeScript($this.PostUninstallScript, $_dryRun) | Out-Null
     }
 
-    hidden [void] InvokeScript([string]$_script)
+    hidden [void] InvokeScript([string]$_script, [bool]$_dryRun)
     {
+        if ($_dryRun) {
+            return
+        }
+
         # do nothing if no script
         if ([string]::IsNullOrWhiteSpace($_script)) {
             return

@@ -34,6 +34,11 @@ class PSGalleryParcelProvider : ParcelProvider
         return ($result.Length -gt 0)
     }
 
+    [string] GetPackageLatestVersion([ParcelPackage]$_package)
+    {
+        return Invoke-Expression -Command "(Find-Module -Name $($_package.Name) $($this.GetSourceArgument($_package)) -ErrorAction Ignore).Version"
+    }
+
     [string] GetVersionArgument([ParcelPackage]$_package)
     {
         if ([string]::IsNullOrWhiteSpace($_package.Version) -or ($_package.Version -ieq 'latest')) {
@@ -45,11 +50,12 @@ class PSGalleryParcelProvider : ParcelProvider
 
     [string] GetSourceArgument([ParcelPackage]$_package)
     {
-        if ([string]::IsNullOrWhiteSpace($_package.Source)) {
-            return [string]::Empty
+        $_source = $_package.Source
+        if ([string]::IsNullOrWhiteSpace($_source)) {
+            $_source = 'PSGallery'
         }
 
-        return "-Repository $($_package.Source)"
+        return "-Repository $($_source)"
     }
 
     #TODO: Source (repository)

@@ -11,7 +11,10 @@ function Install-ParcelPackages
         $Environment,
 
         [switch]
-        $IgnoreEnsures
+        $IgnoreEnsures,
+
+        [switch]
+        $WhatIf
     )
 
     if (!(Test-ParcelAdminUser)) {
@@ -31,7 +34,7 @@ function Install-ParcelPackages
     $context = Get-ParcelContext -Environment $Environment
     $packages = ConvertTo-ParcelPackages -Packages $config.packages -Context $context
     $scripts = ConvertTo-ParcelScripts -Scripts $config.scripts
-    Invoke-ParcelPackages -Action Install -Packages $packages -Scripts $scripts -Context $context -IgnoreEnsures:$IgnoreEnsures
+    Invoke-ParcelPackages -Action Install -Packages $packages -Scripts $scripts -Context $context -IgnoreEnsures:$IgnoreEnsures -WhatIf:$WhatIf
 }
 
 function Uninstall-ParcelPackages
@@ -47,7 +50,10 @@ function Uninstall-ParcelPackages
         $Environment,
 
         [switch]
-        $IgnoreEnsures
+        $IgnoreEnsures,
+
+        [switch]
+        $WhatIf
     )
 
     if (!(Test-ParcelAdminUser)) {
@@ -67,5 +73,5 @@ function Uninstall-ParcelPackages
     $context = Get-ParcelContext -Environment $Environment
     $packages = ConvertTo-ParcelPackages -Packages $config.packages -Context $context
     $scripts = ConvertTo-ParcelScripts -Scripts $config.scripts
-    Invoke-ParcelPackages -Action Uninstall -Packages $packages -Scripts $scripts -Context $context -IgnoreEnsures:$IgnoreEnsures
+    Invoke-ParcelPackages -Action Uninstall -Packages $packages -Scripts $scripts -Context $context -IgnoreEnsures:$IgnoreEnsures -WhatIf:$WhatIf
 }

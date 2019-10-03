@@ -2,9 +2,11 @@ class ParcelPackage
 {
     [string] $Name
     [string] $ProviderName
-    [string] $Version
     [string] $Source
     [ParcelArguments] $Arguments
+
+    [string] $Version
+    [bool] $IsLatest = $false
 
     [ParcelEnsureType] $Ensure
     [string] $When
@@ -41,9 +43,9 @@ class ParcelPackage
             $package.version = 'latest'
         }
 
-        #TODO: remove this when latest is supported
+        # are we using the latest version?
         if ([string]::IsNullOrWhiteSpace($package.version) -or ($package.version -ieq 'latest')) {
-            throw "Not supplying, or using latest version is currently unsupported"
+            $this.IsLatest = $true
         }
 
         # set the properties

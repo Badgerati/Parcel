@@ -168,7 +168,10 @@ function Invoke-ParcelPackages
         $Context,
 
         [switch]
-        $IgnoreEnsures
+        $IgnoreEnsures,
+
+        [switch]
+        $WhatIf
     )
 
     Write-Host ([string]::Empty)
@@ -185,20 +188,17 @@ function Invoke-ParcelPackages
     $stats.Install += [ParcelFactory]::Instance().InstallProviders()
 
     # invoke any global pre install/uninstall
-    switch ($Action.ToLowerInvariant()) {
-        'install' {
-            $Scripts.PreInstall()
-        }
-
-        'uninstall' {
-            $Scripts.PreUninstall()
-        }
-    }
+    Invoke-ParcelGlobalScript -Action $Action -Stage Pre -WhatIf:$WhatIf
 
     # attempt to install/uninstall each package
     foreach ($package in $Packages) {
         # get the provider
         $provider = [ParcelFactory]::Instance().GetProvider($package.ProviderName)
+
+        # update the package's version with latest if required
+        if ($package.IsLatest) {
+            $provider.SetPackageLatestVersion($package)
+        }
 
         # write out the strap line
         Write-ParcelPackageHeader -Package $package -Provider $provider
@@ -220,21 +220,21 @@ function Invoke-ParcelPackages
                     switch ($Action.ToLowerInvariant()) {
                         'install' {
                             if (@('neutral', 'present') -icontains $package.Ensure) {
-                                $result = $provider.Install($package, $Context)
+                                $result = $provider.Install($package, $Context, $WhatIf)
                             }
                             else {
                                 $_action = 'uninstall'
-                                $result = $provider.Uninstall($package, $Context)
+                                $result = $provider.Uninstall($package, $Context, $WhatIf)
                             }
                         }
 
                         'uninstall' {
                             if (@('neutral', 'absent') -icontains $package.Ensure) {
-                                $result = $provider.Uninstall($package, $Context)
+                                $result = $provider.Uninstall($package, $Context, $WhatIf)
                             }
                             else {
                                 $_action = 'install'
-                                $result = $provider.Install($package, $Context)
+                                $result = $provider.Install($package, $Context, $WhatIf)
                             }
                         }
                     }
@@ -260,32 +260,70 @@ function Invoke-ParcelPackages
         $stats[$_action]++
 
         # write out the status
-        $result.WriteStatusMessage()
+        $result.WriteStatusMessage($WhatIf)
         Write-Host ([string]::Empty)
 
         # refresh the environment and path
-        Update-ParcelEnvironmentVariables
-        Update-ParcelEnvironmentPath
+        Update-ParcelEnvironmentVariables -WhatIf:$WhatIf
+        Update-ParcelEnvironmentPath -WhatIf:$WhatIf
     }
 
     # invoke any global post install/uninstall
-    switch ($Action.ToLowerInvariant()) {
-        'install' {
-            $Scripts.PostInstall()
-        }
-
-        'uninstall' {
-            $Scripts.PostUninstall()
-        }
-    }
+    Invoke-ParcelGlobalScript -Action $Action -Stage Post -WhatIf:$WhatIf
 
     # write out the stats
+    if ($WhatIf) {
+        Write-Host '[WhatIf]: ' -ForegroundColor Cyan -NoNewline
+    }
+
     Write-Host "(installed: $($stats.Install), uninstalled: $($stats.Uninstall), skipped: $($stats.Skipped))"
 
     # write out the total time
     $end = ([datetime]::Now - $start)
     Write-Host "Duration: $($end.Hours) hour(s), $($end.Minutes) minute(s) and $($end.Seconds) second(s)"
     Write-Host ([string]::Empty)
+}
+
+function Invoke-ParcelGlobalScript
+{
+    param(
+        [Parameter(Mandatory=$true)]
+        [ValidateSet('Install', 'Uninstall')]
+        [string]
+        $Action,
+
+        [Parameter(Mandatory=$true)]
+        [ValidateSet('Pre', 'Post')]
+        [string]
+        $Stage,
+
+        [switch]
+        $WhatIf
+    )
+
+    if ($WhatIf) {
+        return
+    }
+
+    switch ($Action.ToLowerInvariant()) {
+        'install' {
+            if ($Stage -ieq 'pre') {
+                $Scripts.PreInstall($WhatIf)
+            }
+            else {
+                $Scripts.PostInstall($WhatIf)
+            }
+        }
+
+        'uninstall' {
+            if ($Stage -ieq 'pre') {
+                $Scripts.PreUninstall($WhatIf)
+            }
+            else {
+                $Scripts.PostUninstall($WhatIf)
+            }
+        }
+    }
 }
 
 function Invoke-ParcelPowershell
@@ -332,6 +370,15 @@ function Get-ParcelEnvironmentVariables
 
 function Update-ParcelEnvironmentPath
 {
+    param(
+        [switch]
+        $WhatIf
+    )
+
+    if ($WhatIf) {
+        return
+    }
+
     # get items in current path
     $items = @(@($env:PATH -split ';') | Select-Object -Unique)
 
@@ -349,6 +396,15 @@ function Update-ParcelEnvironmentPath
 
 function Update-ParcelEnvironmentVariables
 {
+    param(
+        [switch]
+        $WhatIf
+    )
+
+    if ($WhatIf) {
+        return
+    }
+
     foreach ($scope in @('Process', 'Machine', 'User')) {
         foreach ($var in (Get-ParcelEnvironmentVariables -Scope $scope)) {
             Set-Item "Env:$($var)" -Value (Get-ParcelEnvironmentVariable -Name $var -Scope $scope) -Force

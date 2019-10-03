@@ -30,13 +30,27 @@ class ScoopParcelProvider : ParcelProvider
     {
         $result = Invoke-ParcelPowershell -Command "scoop list $($_package.Name)"
         $result = ($result -imatch "^\s*$($_package.Name)\s+$($this.GetVersionArgument($_package))")
-        return ((@($result) -imatch "^\s*$($_package.Name)\s+[0-9\.]+").Length -gt 0)
+        return ((@($result) -imatch "^\s*$($_package.Name)\s+[0-9\._]+").Length -gt 0)
     }
 
     [bool] TestPackageUninstalled([ParcelPackage]$_package)
     {
         $result = Invoke-ParcelPowershell -Command "scoop list $($_package.Name)"
-        return ((@($result) -imatch "^\s*$($_package.Name)\s+[0-9\.]+").Length -eq 0)
+        return ((@($result) -imatch "^\s*$($_package.Name)\s+[0-9\._]+").Length -eq 0)
+    }
+
+    [string] GetPackageLatestVersion([ParcelPackage]$_package)
+    {
+        $result = Invoke-ParcelPowershell -Command "scoop search $($_package.Name)"
+
+        $regex = "$($_package.Name)\s+\((?<version>[0-9\._]+)\)"
+        $result = @(@($result) -imatch $regex)
+
+        if (($result.Length -gt 0) -and ($result[0] -imatch $regex)) {
+            return $Matches['version']
+        }
+
+        return [string]::Empty
     }
 
     [string] GetVersionArgument([ParcelPackage]$_package)

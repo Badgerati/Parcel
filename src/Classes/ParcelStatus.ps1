@@ -14,8 +14,12 @@ class ParcelStatus
         $this.Reason = $_reason
     }
 
-    [void] WriteStatusMessage()
+    [void] WriteStatusMessage([bool]$_dryRun)
     {
+        if ($_dryRun) {
+            Write-Host '[WhatIf]: ' -ForegroundColor Cyan -NoNewline
+        }
+
         switch ($this.Status) {
             'Skipped' {
                 Write-Host $this.Status -ForegroundColor Green -NoNewline

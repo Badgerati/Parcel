@@ -41,6 +41,20 @@ class ChocoParcelProvider : ParcelProvider
         return ((@($result) -imatch "$($_package.Name)\s+[0-9\.]+").Length -eq 0)
     }
 
+    [string] GetPackageLatestVersion([ParcelPackage]$_package)
+    {
+        $result = Invoke-Expression -Command "choco search $($_package.Name) --exact $($this.GetSourceArgument($_package)) --allow-unofficial"
+
+        $regex = "$($_package.Name)\s+(?<version>[0-9\.]+)"
+        $result = @(@($result) -imatch $regex)
+
+        if (($result.Length -gt 0) -and ($result[0] -imatch $regex)) {
+            return $Matches['version']
+        }
+
+        return [string]::Empty
+    }
+
     [bool] TestExitCode([int]$_code, [string]$_output, [string]$_action)
     {
         # valid exit codes

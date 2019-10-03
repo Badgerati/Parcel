@@ -26,7 +26,7 @@ class ParcelProvider
         return [ParcelStatus]::new('Changed')
     }
 
-    [ParcelStatus] Install([ParcelPackage]$_package, [hashtable]$_context)
+    [ParcelStatus] Install([ParcelPackage]$_package, [hashtable]$_context, [bool]$_dryRun)
     {
         # check if package is valid
         $status = $_package.TestPackage($_context)
@@ -40,7 +40,7 @@ class ParcelProvider
         }
 
         # run any pre-install scripts
-        $_package.Scripts.PreInstall()
+        $_package.Scripts.PreInstall($_dryRun)
 
         # attempt to install
         $output = [string]::Empty
@@ -62,16 +62,18 @@ class ParcelProvider
 
             Write-Verbose $_script
 
-            if ($this.RunAsPowerShell) {
-                $_script += '; if (!$? -or ($LASTEXITCODE -ne 0)) { throw }'
-                $output = Invoke-ParcelPowershell -Command $_script
-            }
-            else {
-                $output = Invoke-Expression -Command $_script -ErrorAction Stop
-            }
+            if (!$_dryRun) {
+                if ($this.RunAsPowerShell) {
+                    $_script += '; if (!$? -or ($LASTEXITCODE -ne 0)) { throw }'
+                    $output = Invoke-ParcelPowershell -Command $_script
+                }
+                else {
+                    $output = Invoke-Expression -Command $_script -ErrorAction Stop
+                }
 
-            if (!$this.TestExitCode($LASTEXITCODE, $output, 'install')) {
-                throw 'Failed to install package'
+                if (!$this.TestExitCode($LASTEXITCODE, $output, 'install')) {
+                    throw 'Failed to install package'
+                }
             }
         }
         catch {
@@ -80,13 +82,13 @@ class ParcelProvider
         }
 
         # run any pre-install scripts
-        $_package.Scripts.PostInstall()
+        $_package.Scripts.PostInstall($_dryRun)
 
         # state we have changed something
         return [ParcelStatus]::new('Changed')
     }
 
-    [ParcelStatus] Uninstall([ParcelPackage]$_package, [hashtable]$_context)
+    [ParcelStatus] Uninstall([ParcelPackage]$_package, [hashtable]$_context, [bool]$_dryRun)
     {
         # check if package is valid
         $status = $_package.TestPackage($_context)
@@ -100,7 +102,7 @@ class ParcelProvider
         }
 
         # run any pre-install scripts
-        $_package.Scripts.PreUninstall()
+        $_package.Scripts.PreUninstall($_dryRun)
 
         # attempt to uninstall
         $output = [string]::Empty
@@ -112,16 +114,18 @@ class ParcelProvider
 
             Write-Verbose $_script
 
-            if ($this.RunAsPowerShell) {
-                $_script += '; if (!$? -or ($LASTEXITCODE -ne 0)) { throw }'
-                $output = Invoke-ParcelPowershell -Command $_script
-            }
-            else {
-                $output = Invoke-Expression -Command $_script -ErrorAction Stop
-            }
+            if (!$_dryRun) {
+                if ($this.RunAsPowerShell) {
+                    $_script += '; if (!$? -or ($LASTEXITCODE -ne 0)) { throw }'
+                    $output = Invoke-ParcelPowershell -Command $_script
+                }
+                else {
+                    $output = Invoke-Expression -Command $_script -ErrorAction Stop
+                }
 
-            if (!$this.TestExitCode($LASTEXITCODE, $output, 'uninstall')) {
-                throw 'Failed to uninstall package'
+                if (!$this.TestExitCode($LASTEXITCODE, $output, 'uninstall')) {
+                    throw 'Failed to uninstall package'
+                }
             }
         }
         catch {
@@ -130,10 +134,19 @@ class ParcelProvider
         }
 
         # run any pre-install scripts
-        $_package.Scripts.PostUninstall()
+        $_package.Scripts.PostUninstall($_dryRun)
 
         # state we have changed something
         return [ParcelStatus]::new('Changed')
+    }
+
+    [void] SetPackageLatestVersion([ParcelPackage]$_package)
+    {
+        if (!$_package.IsLatest) {
+            return
+        }
+
+        $_package.Version = $this.GetPackageLatestVersion($_package)
     }
 
     [string] GetPackageHeaderMessage([ParcelPackage]$_package)
@@ -156,6 +169,11 @@ class ParcelProvider
     [bool] TestProviderInstalled()
     {
         return $true
+    }
+
+    [string] GetPackageLatestVersion([ParcelPackage]$_package)
+    {
+        return [string]::Empty
     }
 
     [string] GetVersionArgument([ParcelPackage]$_package)

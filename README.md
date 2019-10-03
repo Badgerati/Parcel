@@ -22,8 +22,8 @@ You define the packages using a YAML file - the default is `parcel.yml`, but can
 Import-Module ./src/Parcel.psd1 -Force
 
 # then
-Install-ParcelPackages [-Path <string>] [-Environment <string>] [-IgnoreEnsures]
-Uninstall-ParcelPackages [-Path <string>] [-Environment <string>] [-IgnoreEnsures]
+Install-ParcelPackages [-Path <string>] [-Environment <string>] [-IgnoreEnsures] [-WhatIf]
+Uninstall-ParcelPackages [-Path <string>] [-Environment <string>] [-IgnoreEnsures] [-WhatIf]
 ```
 
 ## Examples
@@ -54,7 +54,7 @@ The properties that are currently supported are in packages are:
 
 * name
 * provider
-* version (currently has to be provided - cannot be empty or latest)
+* version (can be a specific version, or empty/latest)
 * source (can be a url, or a repository name, or any other source)
 * args (extra arguments to run, can also be split into `install:` and `uninstall:`)
 * ensure (can be empty, or present/absent)
@@ -70,7 +70,7 @@ There is also a scripts block that allows for defining pre/post scripts that run
 packages:
 - name: <some-name>
   provider: <provider>
-  version: <version>
+  version: <version|empty|latest>
   source: <source>
   args:
     install: <custom-install-arguments>
