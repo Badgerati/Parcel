@@ -1,6 +1,6 @@
 # Parcel
 
-> I'm still working on this currently.
+> This is still a work in progress!
 
 Parcel is a cross-platform PowerShell package manager and provisioner for a number of different package managers.
 
