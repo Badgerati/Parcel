@@ -94,6 +94,16 @@ scripts:
   post:
     install: <powershell-script>
     uninstall: <powershell-script>
+
+providers:
+  <name>:
+    source:
+    - name: <source-name>
+      url: <source-url>
+      default: <true|false>
+    args:
+      install: <custom-install-arguments>
+      uninstall: <custom-uninstall-arguments>
 ```
 
 For `when`, there is a `$parcel` object available that has the following structure:
