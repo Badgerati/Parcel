@@ -165,7 +165,7 @@ class ParcelProvider
 
     [bool] TestPackageUninstalled([ParcelPackage]$_package)
     {
-        return (!$this.TestInstalled())
+        return (!$this.TestPackageInstalled($_package))
     }
 
     [bool] TestExitCode([int]$_code, [string]$_output, [string]$_action)
