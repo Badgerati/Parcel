@@ -1,6 +1,25 @@
-# load private functions and classes
+# root path to module
 $root = Split-Path -Parent -Path $MyInvocation.MyCommand.Path
 
+# get the path to the libraries and load them
+$libraries = Join-Path $root 'lib'
+$libraries = Join-Path $libraries 'YamlDotNet'
+$name = 'YamlDotNet.dll'
+
+switch ($PSEdition.ToLowerInvariant()) {
+    'core' {
+        $path = Join-Path 'netstandard1.3' $name
+    }
+
+    default {
+        $path = Join-Path 'net45' $name
+    }
+}
+
+$path = (Join-Path $libraries $path)
+[System.Reflection.Assembly]::LoadFrom($path) | Out-Null
+
+# load private functions and classes
 $classes = @(
     "$($root)/Classes/Enums/ParcelOSType.ps1",
     "$($root)/Classes/Enums/ParcelEnsureType.ps1",

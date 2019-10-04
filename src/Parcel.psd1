@@ -28,8 +28,8 @@
     # Minimum version of the Windows PowerShell engine required by this module
     PowerShellVersion = '5.0'
 
-    # Scripts to run prior to loading the module
-    ScriptsToProcess = @("ParcelLoad.ps1")
+    # Functions to export from this Module
+    FunctionsToExport = @('Install-ParcelPackages', 'Uninstall-ParcelPackages')
 
     # Private data to pass to the module specified in RootModule/ModuleToProcess. This may also contain a PSData hashtable with additional module metadata used by PowerShell.
     PrivateData = @{

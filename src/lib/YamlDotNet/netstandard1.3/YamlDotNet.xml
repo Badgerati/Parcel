@@ -9,6 +9,11 @@
             The exception that is thrown when an alias references an anchor that does not exist.
             </summary>
         </member>
+        <member name="M:YamlDotNet.Core.AnchorNotFoundException.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:YamlDotNet.Core.AnchorNotFoundException"/> class.
+            </summary>
+        </member>
         <member name="M:YamlDotNet.Core.AnchorNotFoundException.#ctor(System.String)">
             <summary>
             Initializes a new instance of the <see cref="T:YamlDotNet.Core.AnchorNotFoundException"/> class.
@@ -905,10 +910,41 @@
             </summary>
             <param name="visitor">visitor, may not be null.</param>
         </member>
+        <member name="T:YamlDotNet.Core.FakeList`1">
+            <summary>
+            Implements an indexer through an IEnumerator&lt;T&gt;.
+            </summary>
+        </member>
+        <member name="M:YamlDotNet.Core.FakeList`1.#ctor(System.Collections.Generic.IEnumerator{`0})">
+            <summary>
+            Initializes a new instance of FakeList&lt;T&gt;.
+            </summary>
+            <param name="collection">The enumerator to use to implement the indexer.</param>
+        </member>
+        <member name="M:YamlDotNet.Core.FakeList`1.#ctor(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+            Initializes a new instance of FakeList&lt;T&gt;.
+            </summary>
+            <param name="collection">The collection to use to implement the indexer.</param>
+        </member>
+        <member name="P:YamlDotNet.Core.FakeList`1.Item(System.Int32)">
+            <summary>
+            Gets the element at the specified index. 
+            </summary>
+            <remarks>
+            If index is greater or equal than the last used index, this operation is O(index - lastIndex),
+            else this operation is O(index).
+            </remarks>
+        </member>
         <member name="T:YamlDotNet.Core.ForwardAnchorNotSupportedException">
             <summary>
             The exception that is thrown when an alias references an anchor
             that has not yet been defined in a context that does not support forward references.
+            </summary>
+        </member>
+        <member name="M:YamlDotNet.Core.ForwardAnchorNotSupportedException.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:YamlDotNet.Core.AnchorNotFoundException"/> class.
             </summary>
         </member>
         <member name="M:YamlDotNet.Core.ForwardAnchorNotSupportedException.#ctor(System.String)">
@@ -1144,6 +1180,11 @@
             Exception that is thrown when an infinite recursion is detected.
             </summary>
         </member>
+        <member name="M:YamlDotNet.Core.MaximumRecursionLevelReachedException.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:YamlDotNet.Core.MaximumRecursionLevelReachedException"/> class.
+            </summary>
+        </member>
         <member name="M:YamlDotNet.Core.MaximumRecursionLevelReachedException.#ctor(System.String)">
             <summary>
             Initializes a new instance of the <see cref="T:YamlDotNet.Core.MaximumRecursionLevelReachedException"/> class.
@@ -1369,7 +1410,7 @@
             Extension methods that provide useful abstractions over <see cref="T:YamlDotNet.Core.IParser"/>.
             </summary>
         </member>
-        <member name="M:YamlDotNet.Core.ParserExtensions.Consume``1(YamlDotNet.Core.IParser)">
+        <member name="M:YamlDotNet.Core.ParserExtensions.Expect``1(YamlDotNet.Core.IParser)">
             <summary>
             Ensures that the current event is of the specified type, returns it and moves to the next event.
             </summary>
@@ -1377,29 +1418,28 @@
             <returns>Returns the current event.</returns>
             <exception cref="T:YamlDotNet.Core.YamlException">If the current event is not of the specified type.</exception>
         </member>
-        <member name="M:YamlDotNet.Core.ParserExtensions.TryConsume``1(YamlDotNet.Core.IParser,``0@)">
+        <member name="M:YamlDotNet.Core.ParserExtensions.Accept``1(YamlDotNet.Core.IParser)">
+            <summary>
+            Checks whether the current event is of the specified type.
+            </summary>
+            <typeparam name="T">Type of the event.</typeparam>
+            <returns>Returns true if the current event is of type <typeparamref name="T"/>. Otherwise returns false.</returns>
+        </member>
+        <member name="M:YamlDotNet.Core.ParserExtensions.Allow``1(YamlDotNet.Core.IParser)">
             <summary>
             Checks whether the current event is of the specified type.
             If the event is of the specified type, returns it and moves to the next event.
             Otherwise returns null.
             </summary>
             <typeparam name="T">Type of the <see cref="T:YamlDotNet.Core.Events.ParsingEvent"/>.</typeparam>
-            <returns>Returns true if the current event is of type T; otherwise returns null.</returns>
+            <returns>Returns the current event if it is of type T; otherwise returns null.</returns>
         </member>
-        <member name="M:YamlDotNet.Core.ParserExtensions.Require``1(YamlDotNet.Core.IParser)">
+        <member name="M:YamlDotNet.Core.ParserExtensions.Peek``1(YamlDotNet.Core.IParser)">
             <summary>
-            Enforces that the current event is of the specified type.
+            Gets the next event without consuming it.
             </summary>
             <typeparam name="T">Type of the <see cref="T:YamlDotNet.Core.Events.ParsingEvent"/>.</typeparam>
-            <returns>Returns the current event.</returns>
-            <exception cref="T:YamlDotNet.Core.YamlException">If the current event is not of the specified type.</exception>
-        </member>
-        <member name="M:YamlDotNet.Core.ParserExtensions.Accept``1(YamlDotNet.Core.IParser,``0@)">
-            <summary>
-            Checks whether the current event is of the specified type.
-            </summary>
-            <typeparam name="T">Type of the event.</typeparam>
-            <returns>Returns true if the current event is of type <typeparamref name="T"/>. Otherwise returns false.</returns>
+            <returns>Returns the current event if it is of type T; otherwise returns null.</returns>
         </member>
         <member name="M:YamlDotNet.Core.ParserExtensions.SkipThisAndNestedEvents(YamlDotNet.Core.IParser)">
             <summary>
@@ -1606,7 +1646,7 @@
             Scan a block scalar.
             </summary>
         </member>
-        <member name="M:YamlDotNet.Core.Scanner.ScanBlockScalarBreaks(System.Int32,System.Text.StringBuilder,YamlDotNet.Core.Mark@)">
+        <member name="M:YamlDotNet.Core.Scanner.ScanBlockScalarBreaks(System.Int32,System.Text.StringBuilder,YamlDotNet.Core.Mark,YamlDotNet.Core.Mark@)">
             <summary>
             Scan indentation spaces and line breaks for a block scalar.  Determine the
             indentation level if needed.
@@ -1703,6 +1743,11 @@
             Exception that is thrown when a semantic error is detected on a YAML stream.
             </summary>
         </member>
+        <member name="M:YamlDotNet.Core.SemanticErrorException.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:YamlDotNet.Core.SemanticErrorException"/> class.
+            </summary>
+        </member>
         <member name="M:YamlDotNet.Core.SemanticErrorException.#ctor(System.String)">
             <summary>
             Initializes a new instance of the <see cref="T:YamlDotNet.Core.SemanticErrorException"/> class.
@@ -1724,6 +1769,11 @@
         <member name="T:YamlDotNet.Core.SyntaxErrorException">
             <summary>
             Exception that is thrown when a syntax error is detected on a YAML stream.
+            </summary>
+        </member>
+        <member name="M:YamlDotNet.Core.SyntaxErrorException.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:YamlDotNet.Core.SyntaxErrorException"/> class.
             </summary>
         </member>
         <member name="M:YamlDotNet.Core.SyntaxErrorException.#ctor(System.String)">
@@ -2340,6 +2390,11 @@
             Gets the position in the input stream where the event that originated the exception ends.
             </summary>
         </member>
+        <member name="M:YamlDotNet.Core.YamlException.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:YamlDotNet.Core.YamlException"/> class.
+            </summary>
+        </member>
         <member name="M:YamlDotNet.Core.YamlException.#ctor(System.String)">
             <summary>
             Initializes a new instance of the <see cref="T:YamlDotNet.Core.YamlException"/> class.
@@ -2363,22 +2418,13 @@
             <param name="message">The message.</param>
             <param name="inner">The inner.</param>
         </member>
-        <member name="M:YamlDotNet.Helpers.ExpressionExtensions.AsProperty(System.Linq.Expressions.LambdaExpression)">
-            <summary>
-            Returns the <see cref="T:System.Reflection.PropertyInfo" /> that describes the property that
-            is being returned in an expression in the form:
-            <code>
-              x => x.SomeProperty
-            </code>
-            </summary>
-        </member>
-        <member name="T:YamlDotNet.Helpers.GenericCollectionToNonGenericAdapter`1">
+        <member name="T:YamlDotNet.Helpers.GenericCollectionToNonGenericAdapter">
             <summary>
             Adapts an <see cref="T:System.Collections.Generic.ICollection`1" /> to <see cref="T:System.Collections.IList" />
             because not all generic collections implement <see cref="T:System.Collections.IList" />.
             </summary>
         </member>
-        <member name="T:YamlDotNet.Helpers.GenericDictionaryToNonGenericAdapter`2">
+        <member name="T:YamlDotNet.Helpers.GenericDictionaryToNonGenericAdapter">
             <summary>
             Adapts an <see cref="T:System.Collections.Generic.IDictionary`2" /> to <see cref="T:System.Collections.IDictionary" />
             because not all generic dictionaries implement <see cref="T:System.Collections.IDictionary" />.
@@ -2413,24 +2459,6 @@
             <param name="start">The start position.</param>
             <param name="end">The end position.</param>
             <returns></returns>
-        </member>
-        <member name="M:YamlDotNet.RepresentationModel.DocumentLoadingState.GetNode(System.String,YamlDotNet.Core.Mark,YamlDotNet.Core.Mark)">
-            <summary>
-            Gets the node with the specified anchor.
-            </summary>
-            <param name="anchor">The anchor.</param>
-            <param name="start">The start position.</param>
-            <param name="end">The end position.</param>
-            <returns></returns>
-            <exception cref="T:YamlDotNet.Core.AnchorNotFoundException">if there is no node with that anchor.</exception>
-        </member>
-        <member name="M:YamlDotNet.RepresentationModel.DocumentLoadingState.TryGetNode(System.String,YamlDotNet.RepresentationModel.YamlNode@)">
-            <summary>
-            Gets the node with the specified anchor.
-            </summary>
-            <param name="anchor">The anchor.</param>
-            <param name="node">The node that was retrieved.</param>
-            <returns>true if the anchor was found; otherwise false.</returns>
         </member>
         <member name="M:YamlDotNet.RepresentationModel.DocumentLoadingState.AddNodeWithUnresolvedAliases(YamlDotNet.RepresentationModel.YamlNode)">
             <summary>
@@ -2825,6 +2853,44 @@
             A <see cref="T:YamlDotNet.RepresentationModel.IYamlVisitor"/>.
             </param>
         </member>
+        <member name="M:YamlDotNet.RepresentationModel.YamlNode.Equals(YamlDotNet.RepresentationModel.YamlNode)">
+            <summary>
+            Provides a basic implementation of Object.Equals 
+            </summary>
+        </member>
+        <member name="M:YamlDotNet.RepresentationModel.YamlNode.SafeEquals(System.Object,System.Object)">
+            <summary>
+            Gets a value indicating whether two objects are equal.
+            </summary>
+        </member>
+        <member name="M:YamlDotNet.RepresentationModel.YamlNode.GetHashCode">
+            <summary>
+            Serves as a hash function for a particular type.
+            </summary>
+            <returns>
+            A hash code for the current <see cref="T:System.Object"/>.
+            </returns>
+        </member>
+        <member name="M:YamlDotNet.RepresentationModel.YamlNode.GetHashCode(System.Object)">
+            <summary>
+            Gets the hash code of the specified objectashCode">
+            <summary>
+            Serves as a hash function for a particular type.
+            </summary>
+            <returns>
+            A hash code for the current <see cref="T:System.Object"/>.
+            </returns>
+        </member>
+        <member name="M:YamlDotNet.RepresentationModel.YamlNode.GetHashCode(System.Object)">
+            <summary>
+            Gets the hash code of the specified object, or zero if the object is null. 
+            </summary>
+        </member>
+        <member name="M:YamlDotNet.RepresentationModel.YamlNode.CombineHashCodes(System.Int32,System.Int32)">
+            <summary>
+            Combines two hash codes into one. 
+            </summary>
+        </member>
         <member name="P:YamlDotNet.RepresentationModel.YamlNode.AllNodes">
             <summary>
             Gets all nodes from the document, starting on the current node.
@@ -2835,7 +2901,7 @@
             <summary>
             When implemented, recursively enumerates all the nodes from the document, starting on the current node.
             If <see cref="P:YamlDotNet.Core.RecursionLevel.Maximum"/> is reached, a <see cref="T:YamlDotNet.Core.MaximumRecursionLevelReachedException"/> is thrown
-            instead of continuing and crashing with a <see cref="T:System.StackOverflowException"/>.
+            instead of continuing and crashing with a <see cref="!:StackOverflowException"/>.
             </summary>
         </member>
         <member name="P:YamlDotNet.RepresentationModel.YamlNode.NodeType">
@@ -3770,15 +3836,6 @@
             The style to be used for scalars.
             </summary>
         </member>
-        <member name="M:YamlDotNet.Serialization.ObjectDescriptorExtensions.NonNullValue(YamlDotNet.Serialization.IObjectDescriptor)">
-            <summary>
-            Returns the Value property of the <paramref name="objectDescriptor"/> if it is not null.
-            This is useful in all places that the value must not be null.
-            </summary>
-            <param name="objectDescriptor">An object descriptor.</param>
-            <exception cref="T:System.InvalidOperationException">Thrown when the Value is null</exception>
-            <returns></returns>
-        </member>
         <member name="T:YamlDotNet.Serialization.IObjectFactory">
             <summary>
             Creates instances of types.
@@ -4569,13 +4626,6 @@
             <summary>
             Performs type conversions using every standard provided by the .NET library.
             </summary>
-        </member>
-        <member name="M:YamlDotNet.Serialization.Utilities.TypeConverter.RegisterTypeConverter``2">
-            <summary>
-            Registers a <see cref="T:System.ComponentModel.TypeConverter"/> dynamically.
-            </summary>
-            <typeparam name="TConvertible">The type to which the converter should be associated.</typeparam>
-            <typeparam name="TConverter">The type of the converter.</typeparam>
         </member>
         <member name="M:YamlDotNet.Serialization.Utilities.TypeConverter.ChangeType``1(System.Object)">
             <summary>

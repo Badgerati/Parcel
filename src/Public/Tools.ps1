@@ -59,6 +59,7 @@ function Uninstall-ParcelPackages
         $WhatIf
     )
 
+    $VerbosePreference | Out-Default
     if (!(Test-ParcelAdminUser)) {
         throw 'Parcel needs to be run as an Administrator'
     }
