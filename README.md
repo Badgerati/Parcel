@@ -1,5 +1,8 @@
 # Parcel
 
+[![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/Badgerati/Parcel/master/LICENSE.txt)
+[![PowerShell](https://img.shields.io/powershellgallery/dt/parcel.svg?label=PowerShell&colorB=085298)](https://www.powershellgallery.com/packages/Parcel)
+
 > This is still a work in progress!
 
 Parcel is a cross-platform PowerShell package manager and provisioner for a number of different package managers.
@@ -15,16 +18,19 @@ These are the currently support package providers (more to come!):
 * Scoop (scoop)
 * More to come, like brew, yum, docker, etc.
 
+## Install
+
+```powershell
+Install-Module -Name Parcel
+```
+
 ## Usage
 
 You define the packages using a YAML file - the default is `parcel.yml`, but can be anything. Then, you can run one of the following:
 
 ```powershell
-Import-Module ./src/Parcel.psd1 -Force
-
-# then
-Install-ParcelPackages [-Path <string>] [-Environment <string>] [-IgnoreEnsures] [-WhatIf]
-Uninstall-ParcelPackages [-Path <string>] [-Environment <string>] [-IgnoreEnsures] [-WhatIf]
+Install-ParcelPackages [-Path <string>] [-Environment <string>] [-IgnoreEnsures] [-WhatIf] [-Verbose]
+Uninstall-ParcelPackages [-Path <string>] [-Environment <string>] [-IgnoreEnsures] [-WhatIf] [-Verbose]
 ```
 
 ## Examples
