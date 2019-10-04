@@ -23,7 +23,7 @@
     Copyright = 'Copyright (c) 2019 Matthew Kelly (Badgerati), licensed under the MIT License.'
 
     # Description of the functionality provided by this module
-    Description = 'A Cross-Platform PowerShell package/module installation tool.'
+    Description = 'A Cross-Platform PowerShell package/module installation and provisioning tool.'
 
     # Minimum version of the Windows PowerShell engine required by this module
     PowerShellVersion = '5.0'
@@ -36,7 +36,8 @@
         PSData = @{
 
             # Tags applied to this module. These help with module discovery in online galleries.
-            Tags = @('powershell', 'powershell-core', 'windows', 'unix', 'linux', 'PSEdition_Core', 'cross-platform', 'packages', 'software', 'modules', 'provision')
+            Tags = @('powershell', 'powershell-core', 'windows', 'unix', 'linux', 'PSEdition_Core',
+                'PSEdition_Desktop', 'cross-platform', 'packages', 'software', 'modules', 'provision')
 
             # A URL to the license for this module.
             LicenseUri = 'https://raw.githubusercontent.com/Badgerati/Parcel/master/LICENSE.txt'
