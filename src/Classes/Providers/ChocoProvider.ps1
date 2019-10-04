@@ -1,6 +1,6 @@
 class ChocoParcelProvider : ParcelProvider
 {
-    ChocoParcelProvider() : base('Chocolatey', 'Windows', $false, 'chocolatey') {}
+    ChocoParcelProvider() : base('Chocolatey', $false, 'chocolatey') {}
 
     [bool] TestProviderInstalled()
     {

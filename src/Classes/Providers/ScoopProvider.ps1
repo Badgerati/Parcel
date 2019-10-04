@@ -1,6 +1,6 @@
 class ScoopParcelProvider : ParcelProvider
 {
-    ScoopParcelProvider() : base('Scoop', 'Windows', $true, [string]::Empty) {}
+    ScoopParcelProvider() : base('Scoop', $true, [string]::Empty) {}
 
     [bool] TestProviderInstalled()
     {

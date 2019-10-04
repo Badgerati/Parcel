@@ -1,20 +1,18 @@
 class ParcelProvider
 {
-    [ParcelOSType] $OS
     [string] $Name = [string]::Empty
     [bool] $RunAsPowerShell = $false
     [string] $DefaultSource
     [ParcelArguments] $Arguments
 
     # base constructor
-    ParcelProvider([string]$_name, [ParcelOSType]$_os, [bool]$_runAsPowershell, [string]$_defaultSource)
+    ParcelProvider([string]$_name, [bool]$_runAsPowershell, [string]$_defaultSource)
     {
         if ([string]::IsNullOrWhiteSpace($_name)) {
             throw 'No name provided for Parcel provider'
         }
 
         $this.Name = $_Name
-        $this.OS = $_os
         $this.RunAsPowerShell = $_runAsPowershell
         $this.DefaultSource = $_defaultSource
         $this.Arguments = [ParcelArguments]::new($null)

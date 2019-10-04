@@ -1,6 +1,6 @@
 class PSGalleryParcelProvider : ParcelProvider
 {
-    PSGalleryParcelProvider() : base('PowerShell Gallery', 'All', $false, 'PSGallery') {}
+    PSGalleryParcelProvider() : base('PowerShell Gallery', $false, 'PSGallery') {}
 
     [bool] TestProviderInstalled()
     {
