@@ -1,9 +1,6 @@
-# using class Providers.ParcelProvider
-# using class ParcelPackage
-
 class ChocoParcelProvider : ParcelProvider
 {
-    ChocoParcelProvider() : base('Chocolatey', 'Windows', $false) {}
+    ChocoParcelProvider() : base('Chocolatey', 'Windows', $false, 'chocolatey') {}
 
     [bool] TestProviderInstalled()
     {
@@ -27,6 +24,16 @@ class ChocoParcelProvider : ParcelProvider
     [string] GetPackageUninstallScript([ParcelPackage]$_package)
     {
         return "choco uninstall $($_package.Name) --no-progress -y -f -x --allversions"
+    }
+
+    [string] GetProviderRemoveSourceScript([string]$_name)
+    {
+        return "choco source remove --name $($_name) -f -y"
+    }
+
+    [string] GetProviderAddSourceScript([string]$_name, [string]$_url)
+    {
+        return "choco source add --name $($_name) --source $($_url) -f -y --no-progress --allow-unofficial"
     }
 
     [bool] TestPackageInstalled([ParcelPackage]$_package)
@@ -71,6 +78,10 @@ class ChocoParcelProvider : ParcelProvider
             'uninstall' {
                 return (($_output -ilike '*has been successfully uninstalled*') -or ($_output -ilike '*Cannot uninstall a non-existent package*'))
             }
+
+            'source' {
+                return $true
+            }
         }
 
         return $false
@@ -87,14 +98,15 @@ class ChocoParcelProvider : ParcelProvider
 
     [string] GetSourceArgument([ParcelPackage]$_package)
     {
-        if ([string]::IsNullOrWhiteSpace($_package.Source)) {
+        $_source = $_package.Source
+        if ([string]::IsNullOrWhiteSpace($_source)) {
+            $_source = $this.DefaultSource
+        }
+
+        if ([string]::IsNullOrWhiteSpace($_source)) {
             return [string]::Empty
         }
 
-        return "--source $($_package.Source)"
+        return "--source $($_source)"
     }
-
-    #TODO: Source
-    #TODO: show what latest is?
-    #TODO: "args" support
 }
