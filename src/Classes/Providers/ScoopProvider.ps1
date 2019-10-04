@@ -1,6 +1,6 @@
 class ScoopParcelProvider : ParcelProvider
 {
-    ScoopParcelProvider([hashtable]$package) : base('Scoop', 'Windows', $true) {}
+    ScoopParcelProvider() : base('Scoop', 'Windows', $true, [string]::Empty) {}
 
     [bool] TestProviderInstalled()
     {
@@ -24,6 +24,16 @@ class ScoopParcelProvider : ParcelProvider
     [string] GetPackageUninstallScript([ParcelPackage]$_package)
     {
         return "scoop uninstall $($_package.Name) -p"
+    }
+
+    [string] GetProviderRemoveSourceScript([string]$_name)
+    {
+        return "scoop bucket rm $($_name); if (`$LASTEXITCODE -eq 0) { `$LASTEXITCODE = 0 }"
+    }
+
+    [string] GetProviderAddSourceScript([string]$_name, [string]$_url)
+    {
+        return "scoop bucket add $($_name) $($_url)"
     }
 
     [bool] TestPackageInstalled([ParcelPackage]$_package)
@@ -61,8 +71,4 @@ class ScoopParcelProvider : ParcelProvider
 
         return $_package.Version
     }
-
-    #TODO: "source" support (buckets in this case)
-    #TODO: show what latest is?
-    #TODO: "args" support
 }

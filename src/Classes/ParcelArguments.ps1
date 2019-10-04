@@ -5,6 +5,10 @@ class ParcelArguments
 
     ParcelArguments([object]$_args)
     {
+        if ($null -eq $_args) {
+            $_args = [string]::Empty
+        }
+
         if ($_args -is [string]) {
             $this.Install = $_args
             $this.Uninstall = $_args

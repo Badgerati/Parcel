@@ -8,6 +8,14 @@ class ParcelScripts
 
     ParcelScripts([object]$_pre, [object]$_post)
     {
+        if ($null -eq $_pre) {
+            $_pre = [string]::Empty
+        }
+
+        if ($null -eq $_post) {
+            $_post = [string]::Empty
+        }
+
         # pre scripts
         if ($_pre -is [string]) {
             $this.PreInstallScript = $_pre

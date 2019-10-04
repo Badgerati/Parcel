@@ -31,10 +31,13 @@ function Install-ParcelPackages
 
     $config = ConvertFrom-ParcelYaml -Path $Path
 
+    Write-Host ([string]::Empty)
+    $scripts = ConvertTo-ParcelScripts -Scripts $config.scripts
     $context = Get-ParcelContext -Environment $Environment
     $packages = ConvertTo-ParcelPackages -Packages $config.packages -Context $context
-    $scripts = ConvertTo-ParcelScripts -Scripts $config.scripts
-    Invoke-ParcelPackages -Action Install -Packages $packages -Scripts $scripts -Context $context -IgnoreEnsures:$IgnoreEnsures -WhatIf:$WhatIf
+
+    Invoke-ParcelPackages -Action Install -Packages $packages -Scripts $scripts -Providers $config.providers -Context $context -IgnoreEnsures:$IgnoreEnsures -WhatIf:$WhatIf
+    Write-Host ([string]::Empty)
 }
 
 function Uninstall-ParcelPackages
@@ -70,8 +73,11 @@ function Uninstall-ParcelPackages
 
     $config = ConvertFrom-ParcelYaml -Path $Path
 
+    Write-Host ([string]::Empty)
+    $scripts = ConvertTo-ParcelScripts -Scripts $config.scripts
     $context = Get-ParcelContext -Environment $Environment
     $packages = ConvertTo-ParcelPackages -Packages $config.packages -Context $context
-    $scripts = ConvertTo-ParcelScripts -Scripts $config.scripts
-    Invoke-ParcelPackages -Action Uninstall -Packages $packages -Scripts $scripts -Context $context -IgnoreEnsures:$IgnoreEnsures -WhatIf:$WhatIf
+
+    Invoke-ParcelPackages -Action Uninstall -Packages $packages -Scripts $scripts -Providers $config.providers -Context $context -IgnoreEnsures:$IgnoreEnsures -WhatIf:$WhatIf
+    Write-Host ([string]::Empty)
 }

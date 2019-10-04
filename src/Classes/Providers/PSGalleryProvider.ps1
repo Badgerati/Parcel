@@ -1,6 +1,6 @@
 class PSGalleryParcelProvider : ParcelProvider
 {
-    PSGalleryParcelProvider([hashtable]$package) : base('PowerShell Gallery', 'All', $false) {}
+    PSGalleryParcelProvider() : base('PowerShell Gallery', 'All', $false, 'PSGallery') {}
 
     [bool] TestProviderInstalled()
     {
@@ -28,6 +28,16 @@ class PSGalleryParcelProvider : ParcelProvider
         return "Uninstall-Module -Name $($_package.Name) -Force -AllVersions -ErrorAction Stop"
     }
 
+    [string] GetProviderRemoveSourceScript([string]$_name)
+    {
+        return "Unregister-PSRepository -Name $($_name) -ErrorAction Ignore"
+    }
+
+    [string] GetProviderAddSourceScript([string]$_name, [string]$_url)
+    {
+        return "Register-PSRepository -Name $($_name) -SourceLocation $($_url) -PublishLocation $($_url) -ErrorAction Stop"
+    }
+
     [bool] TestPackageInstalled([ParcelPackage]$_package)
     {
         $result = (Get-Module -Name $_package.Name -ListAvailable | Where-Object { $_.Version -ieq $_package.Version })
@@ -52,13 +62,13 @@ class PSGalleryParcelProvider : ParcelProvider
     {
         $_source = $_package.Source
         if ([string]::IsNullOrWhiteSpace($_source)) {
-            $_source = 'PSGallery'
+            $_source = $this.DefaultSource
+        }
+
+        if ([string]::IsNullOrWhiteSpace($_source)) {
+            return [string]::Empty
         }
 
         return "-Repository $($_source)"
     }
-
-    #TODO: Source (repository)
-    #TODO: get latest version!!
-    #TODO: "args" support
 }

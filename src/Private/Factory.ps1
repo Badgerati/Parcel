@@ -9,6 +9,35 @@ function ConvertTo-ParcelScripts
     return [ParcelScripts]::new($Scripts.pre, $Scripts.post)
 }
 
+function Initialize-ParcelProviders
+{
+    param(
+        [Parameter()]
+        [hashtable]
+        $Providers,
+
+        [switch]
+        $WhatIf
+    )
+
+    # do nothing if there are no providers
+    if (($null -eq $Providers) -or ($Providers.Count -eq 0)) {
+        return
+    }
+
+    # each key here will be a provider
+    foreach ($name in $Providers.Keys) {
+        # get the provider
+        $provider = [ParcelFactory]::Instance().GetProvider($name)
+
+        # setup any custom sources
+        $provider.SetCustomSources($Providers[$name].sources, $WhatIf)
+
+        # setup any global custom arguments
+        $provider.SetArguments($Providers[$name].args)
+    }
+}
+
 function ConvertTo-ParcelPackages
 {
     param(
@@ -77,6 +106,17 @@ function Write-ParcelPackageHeader
     if ($PSCmdlet.ParameterSetName -ieq 'package') {
         $Message = $Provider.GetPackageHeaderMessage($Package)
     }
+
+    Write-ParcelHeader -Message $Message
+}
+
+function Write-ParcelHeader
+{
+    param(
+        [Parameter()]
+        [string]
+        $Message
+    )
 
     $dashes = ('-' * (80 - $Message.Length))
     Write-Host "$($Message)$($dashes)>"
@@ -163,6 +203,10 @@ function Invoke-ParcelPackages
         [ParcelScripts]
         $Scripts,
 
+        [Parameter()]
+        [hashtable]
+        $Providers,
+
         [Parameter(Mandatory=$true)]
         [hashtable]
         $Context,
@@ -174,7 +218,6 @@ function Invoke-ParcelPackages
         $WhatIf
     )
 
-    Write-Host ([string]::Empty)
     $start = [datetime]::Now
 
     # stats of what's installed etc
@@ -186,6 +229,9 @@ function Invoke-ParcelPackages
 
     # check if we need to install any providers
     $stats.Install += [ParcelFactory]::Instance().InstallProviders($WhatIf)
+
+    # setup any provider details, like sources
+    Initialize-ParcelProviders -Providers $Providers -WhatIf:$WhatIf
 
     # invoke any global pre install/uninstall
     Invoke-ParcelGlobalScript -Action $Action -Stage Pre -WhatIf:$WhatIf
@@ -281,7 +327,6 @@ function Invoke-ParcelPackages
     # write out the total time
     $end = ([datetime]::Now - $start)
     Write-Host "Duration: $($end.Hours) hour(s), $($end.Minutes) minute(s) and $($end.Seconds) second(s)"
-    Write-Host ([string]::Empty)
 }
 
 function Invoke-ParcelGlobalScript
@@ -333,6 +378,8 @@ function Invoke-ParcelPowershell
         [string]
         $Command
     )
+
+    $Command += '; if (!$? -or ($LASTEXITCODE -ne 0)) { throw }'
 
     if ($PSVersionTable.PSEdition -ieq 'Desktop') {
         return (powershell -c $Command)
