@@ -160,7 +160,12 @@ class ParcelProvider
             $_latestFlag = ' <latest>'
         }
 
-        return "$($_package.Name.ToUpperInvariant()) [v$($_package.Version)$($_latestFlag) - $($this.Name)]"
+        $_version = [string]::Empty
+        if (![string]::IsNullOrWhiteSpace($_package.Version) -and ($_package.Version -ine 'latest')) {
+            $_version = "v$($_package.Version)"
+        }
+
+        return "$($_package.Name.ToUpperInvariant()) [$($_version)$($_latestFlag) - $($this.Name)]"
     }
 
     [bool] TestPackageUninstalled([ParcelPackage]$_package)
