@@ -136,3 +136,4 @@ $parcel = @{
 * This currently does not support self-installation due to some quirks with PowerShell
 * Sources are not supported, due to Homebrew not having them
 * Latest does work, but Parcel cannot retrieve the latest version as Homebrew doesn't display it
+  * Since Parcel can't get the latest version, using it will always "Change"
