@@ -296,15 +296,33 @@ class ParcelProvider
         return [string]::Empty
     }
 
-    [scriptblock] GetProviderInstallScriptBlock([hashtable]$_context) { throw [System.NotImplementedException]::new() }
+    [scriptblock] GetProviderInstallScriptBlock([hashtable]$_context)
+    {
+        throw [System.NotImplementedException]::new("GetProviderInstallScriptBlock ($($this.Name))")
+    }
 
-    [string] GetPackageInstallScript([ParcelPackage]$_package) { throw [System.NotImplementedException]::new() }
+    [string] GetPackageInstallScript([ParcelPackage]$_package)
+    {
+        throw [System.NotImplementedException]::new("GetPackageInstallScript ($($this.Name))")
+    }
 
-    [string] GetPackageUninstallScript([ParcelPackage]$_package) { throw [System.NotImplementedException]::new() }
+    [string] GetPackageUninstallScript([ParcelPackage]$_package)
+    {
+        throw [System.NotImplementedException]::new("GetPackageUninstallScript ($($this.Name))")
+    }
 
-    [bool] TestPackageInstalled([ParcelPackage]$_package) { throw [System.NotImplementedException]::new() }
+    [bool] TestPackageInstalled([ParcelPackage]$_package)
+    {
+        throw [System.NotImplementedException]::new("TestPackageInstalled ($($this.Name))")
+    }
 
-    [string] GetProviderAddSourceScript([string]$_name, [string]$_url) { throw [System.NotImplementedException]::new() }
+    [string] GetProviderAddSourceScript([string]$_name, [string]$_url)
+    {
+        throw [System.NotImplementedException]::new("GetProviderAddSourceScript ($($this.Name))")
+    }
 
-    [string] GetProviderRemoveSourceScript([string]$_name, [string]$_url) { throw [System.NotImplementedException]::new() }
+    [string] GetProviderRemoveSourceScript([string]$_name, [string]$_url)
+    {
+        throw [System.NotImplementedException]::new("GetProviderRemoveSourceScript ($($this.Name))")
+    }
 }

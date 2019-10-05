@@ -8,11 +8,6 @@ class BrewParcelProvider : ParcelProvider
         return ($null -ne $cmd)
     }
 
-    [scriptblock] GetProviderInstallScriptBlock([hashtable]$_context)
-    {
-        throw [System.NotImplementedException]::new()
-    }
-
     [string] GetPackageInstallScript([ParcelPackage]$_package)
     {
         return "brew install --force $($_package.Name)"
@@ -21,16 +16,6 @@ class BrewParcelProvider : ParcelProvider
     [string] GetPackageUninstallScript([ParcelPackage]$_package)
     {
         return "brew uninstall --force $($_package.Name)"
-    }
-
-    [string] GetProviderRemoveSourceScript([string]$_name)
-    {
-        throw [System.NotImplementedException]::new()
-    }
-
-    [string] GetProviderAddSourceScript([string]$_name, [string]$_url)
-    {
-        throw [System.NotImplementedException]::new()
     }
 
     [bool] TestPackageInstalled([ParcelPackage]$_package)
@@ -58,10 +43,5 @@ class BrewParcelProvider : ParcelProvider
         }
 
         return $_package.Version
-    }
-
-    [string] GetSourceArgument([ParcelPackage]$_package)
-    {
-        throw [System.NotImplementedException]::new()
     }
 }
