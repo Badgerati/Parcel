@@ -8,7 +8,7 @@ class ScoopParcelProvider : ParcelProvider
         return ($null -ne $cmd)
     }
 
-    [scriptblock] GetProviderInstallScriptBlock()
+    [scriptblock] GetProviderInstallScriptBlock([hashtable]$_context)
     {
         return {
             Set-ExecutionPolicy RemoteSigned -Scope Process -Force | Out-Null

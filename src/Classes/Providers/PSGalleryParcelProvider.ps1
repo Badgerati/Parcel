@@ -11,7 +11,7 @@ class PSGalleryParcelProvider : ParcelProvider
         return ($null -ne (Get-PackageProvider -Name NuGet -ListAvailable -ErrorAction Ignore))
     }
 
-    [scriptblock] GetProviderInstallScriptBlock()
+    [scriptblock] GetProviderInstallScriptBlock([hashtable]$_context)
     {
         return {
             Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force | Out-Null
