@@ -79,6 +79,10 @@ class ParcelFactory
                 $_provider = [ScoopParcelProvider]::new()
             }
 
+            'brew' {
+                $_provider = [BrewParcelProvider]::new()
+            }
+
             default {
                 throw "Invalid package provider supplied: $($_name)"
             }
