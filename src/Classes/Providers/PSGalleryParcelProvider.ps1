@@ -2,7 +2,7 @@ class PSGalleryParcelProvider : ParcelProvider
 {
     PSGalleryParcelProvider() : base('PowerShell Gallery', $false, 'PSGallery') {}
 
-    [bool] TestProviderInstalled()
+    [bool] TestProviderInstalled([hashtable]$_context)
     {
         if ((Get-Host).Version.Major -gt '5') {
             return $true

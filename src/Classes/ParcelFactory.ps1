@@ -34,7 +34,7 @@ class ParcelFactory
         $this.Providers[$_name] = $_provider
     }
 
-    [int] InstallProviders([bool]$_dryRun)
+    [int] InstallProviders([hashtable]$_context, [bool]$_dryRun)
     {
         $_installed = 0
 
@@ -43,14 +43,14 @@ class ParcelFactory
             $_provider = $this.Providers[$_name]
 
             # do nothing if provider is installed
-            if ($_provider.TestProviderInstalled()) {
+            if ($_provider.TestProviderInstalled($_context)) {
                 continue
             }
 
             # otherwise, attempt at installing it
             Write-ParcelPackageHeader -Message "$($_provider.Name) [Provider]"
 
-            $result = $_provider.InstallProvider($_dryRun)
+            $result = $_provider.InstallProvider($_context, $_dryRun)
             $result.WriteStatusMessage($_dryRun)
             $_installed++
 
@@ -73,7 +73,7 @@ class ParcelFactory
                 $_provider = [ChocoParcelProvider]::new()
             }
 
-            'psgallery' {
+            { @('psgallery', 'ps-gallery') -icontains $_name } {
                 $_provider = [PSGalleryParcelProvider]::new()
             }
 
@@ -87,6 +87,10 @@ class ParcelFactory
 
             'docker' {
                 $_provider = [DockerParcelProvider]::new()
+            }
+
+            { @('winfeature', 'win-feature') -icontains $_name } {
+                $_provider = [WindowsFeatureParcelProvider]::new()
             }
 
             default {

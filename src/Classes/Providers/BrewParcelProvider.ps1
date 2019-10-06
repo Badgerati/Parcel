@@ -2,7 +2,7 @@ class BrewParcelProvider : ParcelProvider
 {
     BrewParcelProvider() : base('Brew', $false, 'brew') {}
 
-    [bool] TestProviderInstalled()
+    [bool] TestProviderInstalled([hashtable]$_context)
     {
         $cmd = Get-Command -Name 'brew' -ErrorAction Ignore
         return ($null -ne $cmd)

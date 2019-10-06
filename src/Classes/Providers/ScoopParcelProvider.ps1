@@ -2,7 +2,7 @@ class ScoopParcelProvider : ParcelProvider
 {
     ScoopParcelProvider() : base('Scoop', $true, [string]::Empty) {}
 
-    [bool] TestProviderInstalled()
+    [bool] TestProviderInstalled([hashtable]$_context)
     {
         $cmd = Get-Command -Name 'scoop' -ErrorAction Ignore
         return ($null -ne $cmd)

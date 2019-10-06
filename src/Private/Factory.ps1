@@ -58,7 +58,21 @@ function ConvertTo-ParcelPackages
 
     # convert each package to a parcel provider
     $Packages | ForEach-Object {
-        ConvertTo-ParcelPackage -Package $_ -Context $Context
+        $_p = $_
+
+        if ([string]::IsNullOrWhiteSpace($_p.name) -and ($_p.names.Length -gt 0)) {
+            if (![string]::IsNullOrWhiteSpace($_p.version) -and ($_p.version -ine 'latest')) {
+                throw "Supplying a version with multiple package names is not supported"
+            }
+
+            $_p.names | ForEach-Object {
+                $_p.name = $_
+                ConvertTo-ParcelPackage -Package $_p -Context $Context
+            }
+        }
+        else {
+            ConvertTo-ParcelPackage -Package $_p -Context $Context
+        }
     }
 }
 
@@ -228,7 +242,7 @@ function Invoke-ParcelPackages
     }
 
     # check if we need to install any providers
-    $stats.Install += [ParcelFactory]::Instance().InstallProviders($WhatIf)
+    $stats.Install += [ParcelFactory]::Instance().InstallProviders($Context, $WhatIf)
 
     # setup any provider details, like sources
     Initialize-ParcelProviders -Providers $Providers -WhatIf:$WhatIf
