@@ -133,7 +133,12 @@ $parcel = @{
 
 ### Homebrew
 
-* This currently does not support self-installation due to some quirks with PowerShell
+* Self-installation is not supported due to some quirks with PowerShell
 * Sources are not supported, due to Homebrew not having them
 * Latest does work, but Parcel cannot retrieve the latest version as Homebrew doesn't display it
   * Since Parcel can't get the latest version, using it will always "Change"
+
+### Docker
+
+* Self-installation is not supported - it's best to include this as another package to be installed
+* Sources are not supported, due to Docker not having them (unless you pre-login to your own registry first)

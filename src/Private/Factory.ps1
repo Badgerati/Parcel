@@ -309,9 +309,11 @@ function Invoke-ParcelPackages
         $result.WriteStatusMessage($WhatIf)
         Write-Host ([string]::Empty)
 
-        # refresh the environment and path
-        Update-ParcelEnvironmentVariables -WhatIf:$WhatIf
-        Update-ParcelEnvironmentPath -WhatIf:$WhatIf
+        # refresh the environment and path - for windows
+        if ($Context.os.type -ieq 'windows') {
+            Update-ParcelEnvironmentVariables -WhatIf:$WhatIf
+            Update-ParcelEnvironmentPath -WhatIf:$WhatIf
+        }
     }
 
     # invoke any global post install/uninstall

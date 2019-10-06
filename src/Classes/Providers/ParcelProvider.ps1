@@ -32,6 +32,11 @@ class ParcelProvider
 
     [ParcelStatus] Install([ParcelPackage]$_package, [hashtable]$_context, [bool]$_dryRun)
     {
+        # check if the provider is installed
+        if (!$this.TestProviderInstalled()) {
+            throw "The $($this.Name) provider is not installed"
+        }
+
         # check if package is valid
         $status = $_package.TestPackage($_context)
         if ($null -ne $status) {
@@ -94,6 +99,11 @@ class ParcelProvider
 
     [ParcelStatus] Uninstall([ParcelPackage]$_package, [hashtable]$_context, [bool]$_dryRun)
     {
+        # check if the provider is installed
+        if (!$this.TestProviderInstalled()) {
+            throw "The $($this.Name) provider is not installed"
+        }
+
         # check if package is valid
         $status = $_package.TestPackage($_context)
         if ($null -ne $status) {
