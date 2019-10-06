@@ -20,7 +20,7 @@ class BrewParcelProvider : ParcelProvider
 
     [bool] TestPackageInstalled([ParcelPackage]$_package)
     {
-        $result = Invoke-Expression -Command "brew list --versions $($_package.Name)"
+        $result = Invoke-Expression -Command "`$env:HOMEBREW_NO_AUTO_UPDATE = '1'; brew list --versions $($_package.Name)"
         $result = ($result -imatch "$($_package.Name)\s+$($this.GetVersionArgument($_package))")
         return ((@($result) -imatch "$($_package.Name)\s+[0-9\._]+").Length -gt 0)
     }
