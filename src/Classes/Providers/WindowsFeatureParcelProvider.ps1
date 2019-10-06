@@ -8,6 +8,10 @@ class WindowsFeatureParcelProvider : ParcelProvider
             throw 'Windows Features are only supported on Windows'
         }
 
+        if ((Get-Host).Version.Major -gt '5') {
+            throw "Windows Features is only supported on PS5.0"
+        }
+
         return $true
     }
 
