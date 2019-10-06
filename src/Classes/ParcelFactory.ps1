@@ -69,7 +69,7 @@ class ParcelFactory
         $_provider = $null
 
         switch ($_name.ToLowerInvariant()) {
-            'choco' {
+            { @('choco', 'chocolatey') -icontains $_name } {
                 $_provider = [ChocoParcelProvider]::new()
             }
 
@@ -81,7 +81,7 @@ class ParcelFactory
                 $_provider = [ScoopParcelProvider]::new()
             }
 
-            'brew' {
+            { @('brew', 'homebrew') -icontains $_name } {
                 $_provider = [BrewParcelProvider]::new()
             }
 
@@ -89,7 +89,7 @@ class ParcelFactory
                 $_provider = [DockerParcelProvider]::new()
             }
 
-            { @('winfeature', 'win-feature') -icontains $_name } {
+            { @('winfeature', 'win-feature', 'windows-feature') -icontains $_name } {
                 $_provider = [WindowsFeatureParcelProvider]::new()
             }
 
