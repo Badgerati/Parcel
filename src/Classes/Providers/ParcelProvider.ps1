@@ -175,6 +175,10 @@ class ParcelProvider
             $_version = "v$($_package.Version)"
         }
 
+        if ([string]::IsNullOrWhiteSpace($_version)) {
+            $_latestFlag = $_latestFlag.Trim()
+        }
+
         return "$($_package.Name.ToUpperInvariant()) [$($_version)$($_latestFlag) - $($this.Name)]"
     }
 
