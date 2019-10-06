@@ -42,10 +42,12 @@ class ParcelFactory
         {
             $_provider = $this.Providers[$_name]
 
+            # do nothing if provider is installed
             if ($_provider.TestProviderInstalled()) {
                 continue
             }
 
+            # otherwise, attempt at installing it
             Write-ParcelPackageHeader -Message "$($_provider.Name) [Provider]"
 
             $result = $_provider.InstallProvider($_dryRun)
@@ -81,6 +83,10 @@ class ParcelFactory
 
             'brew' {
                 $_provider = [BrewParcelProvider]::new()
+            }
+
+            'docker' {
+                $_provider = [DockerParcelProvider]::new()
             }
 
             default {

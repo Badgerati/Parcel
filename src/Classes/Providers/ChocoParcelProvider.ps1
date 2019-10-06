@@ -89,7 +89,7 @@ class ChocoParcelProvider : ParcelProvider
 
     [string] GetVersionArgument([ParcelPackage]$_package)
     {
-        if ([string]::IsNullOrWhiteSpace($_package.Version) -or ($_package.Version -ieq 'latest')) {
+        if ($_package.IsLatest) {
             return [string]::Empty
         }
 
