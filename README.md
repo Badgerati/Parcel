@@ -18,7 +18,7 @@ These are the currently support package providers (more to come!):
 * Scoop (scoop)
 * Homebrew (brew)
 * Docker (docker)
-* More to come, like brew, yum, docker, etc.
+* Windows Features (winfeature)
 
 ## Install
 
@@ -37,7 +37,7 @@ Uninstall-ParcelPackages [-Path <string>] [-Environment <string>] [-IgnoreEnsure
 
 ## Examples
 
-To install 7zip using Chocolatey, the following could be used. For each `name` and `provider` are mandatory, and the name *must* match precisely on all providers:
+To install 7zip using Chocolatey, the following could be used. For each `name`/`names` and `provider` are mandatory, and the name *must* match precisely on all providers:
 
 ```yaml
 ---
@@ -78,7 +78,8 @@ There is also a scripts block that allows for defining pre/post scripts that run
 ---
 packages:
 - name: <some-name>
-  provider: <choco|scoop|psgallery|brew|docker>
+  names: <an array of names>
+  provider: <choco|scoop|psgallery|brew|docker|winfeature>
   version: <version|empty|latest>
   source: <source>
   args:
@@ -182,4 +183,15 @@ packages:
 - name: badgerati/pode
   provider: docker
   version: 1.1.0
+```
+
+### Windows Features
+
+* Only support in Windows
+* Version is always latest (as features have no version)
+
+```yaml
+packages:
+- name: Microsoft-Hyper-V
+  provider: winfeature
 ```

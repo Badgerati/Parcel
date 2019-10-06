@@ -2,7 +2,7 @@ class ChocoParcelProvider : ParcelProvider
 {
     ChocoParcelProvider() : base('Chocolatey', $false, 'chocolatey') {}
 
-    [bool] TestProviderInstalled()
+    [bool] TestProviderInstalled([hashtable]$_context)
     {
         $cmd = Get-Command -Name 'choco' -ErrorAction Ignore
         return ($null -ne $cmd)

@@ -2,7 +2,7 @@ class DockerParcelProvider : ParcelProvider
 {
     DockerParcelProvider() : base('Docker', $false, 'docker') {}
 
-    [bool] TestProviderInstalled()
+    [bool] TestProviderInstalled([hashtable]$_context)
     {
         $cmd = Get-Command -Name 'docker' -ErrorAction Ignore
         return ($null -ne $cmd)

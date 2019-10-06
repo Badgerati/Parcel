@@ -33,7 +33,7 @@ class ParcelProvider
     [ParcelStatus] Install([ParcelPackage]$_package, [hashtable]$_context, [bool]$_dryRun)
     {
         # check if the provider is installed
-        if (!$this.TestProviderInstalled()) {
+        if (!$this.TestProviderInstalled($_context)) {
             throw "The $($this.Name) provider is not installed"
         }
 
@@ -110,7 +110,7 @@ class ParcelProvider
     [ParcelStatus] Uninstall([ParcelPackage]$_package, [hashtable]$_context, [bool]$_dryRun)
     {
         # check if the provider is installed
-        if (!$this.TestProviderInstalled()) {
+        if (!$this.TestProviderInstalled($_context)) {
             throw "The $($this.Name) provider is not installed"
         }
 
@@ -243,7 +243,7 @@ class ParcelProvider
             $_script = $this.GetProviderAddSourceScript($_source.name, $_source.url)
             Write-Verbose $_script
 
-            if (!$_dryRun) {
+            if (![string]::IsNullOrWhiteSpace($_script) -and !$_dryRun) {
                 if ($this.RunAsPowerShell) {
                     $output = Invoke-ParcelPowershell -Command $_script
                 }
@@ -279,7 +279,7 @@ class ParcelProvider
             $_script = $this.GetProviderRemoveSourceScript($_source.name)
             Write-Verbose $_script
 
-            if (!$_dryRun) {
+            if (![string]::IsNullOrWhiteSpace($_script) -and !$_dryRun) {
                 if ($this.RunAsPowerShell) {
                     $output = Invoke-ParcelPowershell -Command $_script
                 }
@@ -305,7 +305,7 @@ class ParcelProvider
 
 
     # unimplemented base functions
-    [bool] TestProviderInstalled()
+    [bool] TestProviderInstalled([hashtable]$_context)
     {
         return $true
     }
