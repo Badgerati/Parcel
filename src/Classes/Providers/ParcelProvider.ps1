@@ -61,7 +61,7 @@ class ParcelProvider
             $_script += " $($this.Arguments.Install)"
 
             if ($_script -ilike '*@PARCEL_NO_VERSION*') {
-                $_script -ireplace '\@PARCEL_NO_VERSION', ''
+                $_script = $_script -ireplace '\@PARCEL_NO_VERSION', ''
             }
             else {
                 $_version = $this.GetVersionArgument($_package)
@@ -71,7 +71,7 @@ class ParcelProvider
             }
 
             if ($_script -ilike '*@PARCEL_NO_SOURCE*') {
-                $_script -ireplace '\@PARCEL_NO_SOURCE', ''
+                $_script = $_script -ireplace '\@PARCEL_NO_SOURCE', ''
             }
             else {
                 $_source = $this.GetSourceArgument($_package)
