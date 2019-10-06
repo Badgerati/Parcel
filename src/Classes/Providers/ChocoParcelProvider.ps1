@@ -8,7 +8,7 @@ class ChocoParcelProvider : ParcelProvider
         return ($null -ne $cmd)
     }
 
-    [scriptblock] GetProviderInstallScriptBlock()
+    [scriptblock] GetProviderInstallScriptBlock([hashtable]$_context)
     {
         return {
             Set-ExecutionPolicy Bypass -Scope Process -Force | Out-Null

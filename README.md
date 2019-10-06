@@ -16,6 +16,7 @@ These are the currently support package providers (more to come!):
 * Chocolatey (choco)
 * PowerShell Gallery (psgallery)
 * Scoop (scoop)
+* Homebrew (brew)
 * More to come, like brew, yum, docker, etc.
 
 ## Install
@@ -35,7 +36,7 @@ Uninstall-ParcelPackages [-Path <string>] [-Environment <string>] [-IgnoreEnsure
 
 ## Examples
 
-To install 7zip using Chocolatey, the following could be used. For each `name` and `provider` are mandatory.
+To install 7zip using Chocolatey, the following could be used. For each `name` and `provider` are mandatory, and the name *must* match precisely on all providers:
 
 ```yaml
 ---
@@ -76,7 +77,7 @@ There is also a scripts block that allows for defining pre/post scripts that run
 ---
 packages:
 - name: <some-name>
-  provider: <choco|scoop|psgallery>
+  provider: <choco|scoop|psgallery|brew>
   version: <version|empty|latest>
   source: <source>
   args:
@@ -127,3 +128,12 @@ $parcel = @{
     }
 }
 ```
+
+## Notes
+
+### Homebrew
+
+* This currently does not support self-installation due to some quirks with PowerShell
+* Sources are not supported, due to Homebrew not having them
+* Latest does work, but Parcel cannot retrieve the latest version as Homebrew doesn't display it
+  * Since Parcel can't get the latest version, using it will always "Change"
