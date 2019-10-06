@@ -60,7 +60,7 @@ class WindowsFeatureParcelProvider : ParcelProvider
     [bool] IsOptionalFeature([ParcelPackage]$_package)
     {
         $optional = $true
-        if ($null -ne (Get-Command -Name 'Get-WindowsFeature' -ErrorAction Stop)) {
+        if ($null -ne (Get-Command -Name 'Get-WindowsFeature' -ErrorAction Ignore)) {
             $optional = ($null -eq (Get-WindowsFeature -Name $_package.Name -ErrorAction Ignore))
         }
 
