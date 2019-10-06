@@ -31,9 +31,12 @@ class DockerParcelProvider : ParcelProvider
         }
 
         # get current images
-        $_images = Invoke-Expression -Command "docker images --format '{{json .}}'" -ErrorAction Stop
-        $_image = ($_images | ConvertFrom-Json) | Where-Object { ($_.Repository -ieq $_package.Name) -and ($_.Tag -ieq $_package.Version) }
-        return ($null -ne $_image)
+        return ($null -ne $this.FindDockerImages($_package))
+    }
+
+    [bool] TestPackageUninstalled([ParcelPackage]$_package)
+    {
+        return ($null -eq $this.FindDockerImages($_package))
     }
 
     [string] GetPackageLatestVersion([ParcelPackage]$_package)
@@ -48,5 +51,11 @@ class DockerParcelProvider : ParcelProvider
         }
 
         return $_package.Version
+    }
+
+    [object] FindDockerImages([ParcelPackage]$_package)
+    {
+        $_images = Invoke-Expression -Command "docker images --format '{{json .}}'" -ErrorAction Stop
+        return ($_images | ConvertFrom-Json) | Where-Object { ($_.Repository -ieq $_package.Name) -and ($_.Tag -ieq $_package.Version) }
     }
 }
