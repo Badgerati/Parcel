@@ -39,7 +39,7 @@ class ScoopParcelProvider : ParcelProvider
     [bool] TestPackageInstalled([ParcelPackage]$_package)
     {
         $result = Invoke-ParcelPowershell -Command "scoop list $($_package.Name)"
-        $result = ($result -imatch "^\s*$($_package.Name)\s+$($this.GetVersionArgument($_package))")
+        $result = (@($result) -imatch "^\s*$($_package.Name)\s+$($this.GetVersionArgument($_package))")
         return ((@($result) -imatch "^\s*$($_package.Name)\s+[0-9\._]+").Length -gt 0)
     }
 
@@ -65,7 +65,7 @@ class ScoopParcelProvider : ParcelProvider
 
     [string] GetVersionArgument([ParcelPackage]$_package)
     {
-        if ([string]::IsNullOrWhiteSpace($_package.Version) -or ($_package.Version -ieq 'latest')) {
+        if ($_package.IsLatest) {
             return [string]::Empty
         }
 

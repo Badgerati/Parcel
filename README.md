@@ -17,6 +17,7 @@ These are the currently support package providers (more to come!):
 * PowerShell Gallery (psgallery)
 * Scoop (scoop)
 * Homebrew (brew)
+* Docker (docker)
 * More to come, like brew, yum, docker, etc.
 
 ## Install
@@ -77,7 +78,7 @@ There is also a scripts block that allows for defining pre/post scripts that run
 ---
 packages:
 - name: <some-name>
-  provider: <choco|scoop|psgallery|brew>
+  provider: <choco|scoop|psgallery|brew|docker>
   version: <version|empty|latest>
   source: <source>
   args:
@@ -129,11 +130,56 @@ $parcel = @{
 }
 ```
 
-## Notes
+## Providers
+
+### Chocolatey
+
+```yaml
+packages:
+- name: 7zip.install
+  provider: choco
+  version: 19.0
+```
+
+### Scoop
+
+```yaml
+packages:
+- name: 7zip
+  provider: scoop
+  version: 19.00
+```
+
+### PowerShell Gallery
+
+```yaml
+packages:
+- name: Pester
+  provider: psgallery
+  version: 4.8.0
+```
 
 ### Homebrew
 
-* This currently does not support self-installation due to some quirks with PowerShell
+* Self-installation is not supported due to some quirks with PowerShell
 * Sources are not supported, due to Homebrew not having them
 * Latest does work, but Parcel cannot retrieve the latest version as Homebrew doesn't display it
   * Since Parcel can't get the latest version, using it will always "Change"
+
+```yaml
+packages:
+- name: p7zip
+  provider: brew
+```
+
+### Docker
+
+* Self-installation is not supported - it's best to include this as another package to be installed
+* Sources are not supported, due to Docker not having them (unless you pre-login to your own registry first)
+
+```yaml
+packages:
+- name: badgerati/pode
+  provider: docker
+  version: 1.1.0
+```

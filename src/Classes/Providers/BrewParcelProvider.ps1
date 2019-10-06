@@ -10,7 +10,7 @@ class BrewParcelProvider : ParcelProvider
 
     [string] GetPackageInstallScript([ParcelPackage]$_package)
     {
-        return "brew install --force $($_package.Name)"
+        return "`$env:HOMEBREW_NO_AUTO_UPDATE = '1'; brew install --force $($_package.Name) @PARCEL_NO_VERSION"
     }
 
     [string] GetPackageUninstallScript([ParcelPackage]$_package)
@@ -21,7 +21,7 @@ class BrewParcelProvider : ParcelProvider
     [bool] TestPackageInstalled([ParcelPackage]$_package)
     {
         $result = Invoke-Expression -Command "brew list --versions $($_package.Name)"
-        $result = ($result -imatch "$($_package.Name)\s+$($this.GetVersionArgument($_package))")
+        $result = (@($result) -imatch "$($_package.Name)\s+$($this.GetVersionArgument($_package))")
         return ((@($result) -imatch "$($_package.Name)\s+[0-9\._]+").Length -gt 0)
     }
 
@@ -38,7 +38,7 @@ class BrewParcelProvider : ParcelProvider
 
     [string] GetVersionArgument([ParcelPackage]$_package)
     {
-        if ([string]::IsNullOrWhiteSpace($_package.Version) -or ($_package.Version -ieq 'latest')) {
+        if ($_package.IsLatest) {
             return [string]::Empty
         }
 

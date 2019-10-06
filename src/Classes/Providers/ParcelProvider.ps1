@@ -32,6 +32,11 @@ class ParcelProvider
 
     [ParcelStatus] Install([ParcelPackage]$_package, [hashtable]$_context, [bool]$_dryRun)
     {
+        # check if the provider is installed
+        if (!$this.TestProviderInstalled()) {
+            throw "The $($this.Name) provider is not installed"
+        }
+
         # check if package is valid
         $status = $_package.TestPackage($_context)
         if ($null -ne $status) {
@@ -55,14 +60,24 @@ class ParcelProvider
             $_script += " $($_package.Arguments.Install)"
             $_script += " $($this.Arguments.Install)"
 
-            $_version = $this.GetVersionArgument($_package)
-            if (![string]::IsNullOrWhiteSpace($_version) -and !$_script.Contains($_version)) {
-                $_script += " $($_version)"
+            if ($_script -ilike '*@PARCEL_NO_VERSION*') {
+                $_script = $_script -ireplace '\@PARCEL_NO_VERSION', ''
+            }
+            else {
+                $_version = $this.GetVersionArgument($_package)
+                if (![string]::IsNullOrWhiteSpace($_version) -and !$_script.Contains($_version)) {
+                    $_script += " $($_version)"
+                }
             }
 
-            $_source = $this.GetSourceArgument($_package)
-            if (![string]::IsNullOrWhiteSpace($_source) -and !$_script.Contains($_source)) {
-                $_script += " $($_source)"
+            if ($_script -ilike '*@PARCEL_NO_SOURCE*') {
+                $_script = $_script -ireplace '\@PARCEL_NO_SOURCE', ''
+            }
+            else {
+                $_source = $this.GetSourceArgument($_package)
+                if (![string]::IsNullOrWhiteSpace($_source) -and !$_script.Contains($_source)) {
+                    $_script += " $($_source)"
+                }
             }
 
             Write-Verbose $_script
@@ -94,6 +109,11 @@ class ParcelProvider
 
     [ParcelStatus] Uninstall([ParcelPackage]$_package, [hashtable]$_context, [bool]$_dryRun)
     {
+        # check if the provider is installed
+        if (!$this.TestProviderInstalled()) {
+            throw "The $($this.Name) provider is not installed"
+        }
+
         # check if package is valid
         $status = $_package.TestPackage($_context)
         if ($null -ne $status) {
@@ -163,6 +183,10 @@ class ParcelProvider
         $_version = [string]::Empty
         if (![string]::IsNullOrWhiteSpace($_package.Version) -and ($_package.Version -ine 'latest')) {
             $_version = "v$($_package.Version)"
+        }
+
+        if ([string]::IsNullOrWhiteSpace($_version)) {
+            $_latestFlag = $_latestFlag.Trim()
         }
 
         return "$($_package.Name.ToUpperInvariant()) [$($_version)$($_latestFlag) - $($this.Name)]"

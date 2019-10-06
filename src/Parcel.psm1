@@ -33,6 +33,7 @@ $classes = @(
     "$($root)/Classes/Providers/PSGalleryParcelProvider.ps1",
     "$($root)/Classes/Providers/ScoopParcelProvider.ps1",
     "$($root)/Classes/Providers/BrewParcelProvider.ps1",
+    "$($root)/Classes/Providers/DockerParcelProvider.ps1",
     "$($root)/Classes/ParcelFactory.ps1"
 )
 
