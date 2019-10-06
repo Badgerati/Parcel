@@ -60,14 +60,24 @@ class ParcelProvider
             $_script += " $($_package.Arguments.Install)"
             $_script += " $($this.Arguments.Install)"
 
-            $_version = $this.GetVersionArgument($_package)
-            if (![string]::IsNullOrWhiteSpace($_version) -and !$_script.Contains($_version)) {
-                $_script += " $($_version)"
+            if ($_script -ilike '*@PARCEL_NO_VERSION*') {
+                $_script -ireplace '\@PARCEL_NO_VERSION', ''
+            }
+            else {
+                $_version = $this.GetVersionArgument($_package)
+                if (![string]::IsNullOrWhiteSpace($_version) -and !$_script.Contains($_version)) {
+                    $_script += " $($_version)"
+                }
             }
 
-            $_source = $this.GetSourceArgument($_package)
-            if (![string]::IsNullOrWhiteSpace($_source) -and !$_script.Contains($_source)) {
-                $_script += " $($_source)"
+            if ($_script -ilike '*@PARCEL_NO_SOURCE*') {
+                $_script -ireplace '\@PARCEL_NO_SOURCE', ''
+            }
+            else {
+                $_source = $this.GetSourceArgument($_package)
+                if (![string]::IsNullOrWhiteSpace($_source) -and !$_script.Contains($_source)) {
+                    $_script += " $($_source)"
+                }
             }
 
             Write-Verbose $_script
