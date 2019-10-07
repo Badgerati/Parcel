@@ -56,7 +56,7 @@ class ParcelProvider
 
         try {
             # get install script - adding args, version and source
-            $_script = $this.GetPackageInstallScript($_package)
+            $_script = $this.GetPackageInstallScript($_package, $_context)
             $_script += " $($_package.Arguments.Install)"
             $_script += " $($this.Arguments.Install)"
 
@@ -133,7 +133,7 @@ class ParcelProvider
 
         try {
             # get uninstall script - adding args
-            $_script = $this.GetPackageUninstallScript($_package)
+            $_script = $this.GetPackageUninstallScript($_package, $_context)
             $_script += " $($_package.Arguments.Uninstall)"
             $_script += " $($this.Arguments.Uninstall)"
 
@@ -330,12 +330,12 @@ class ParcelProvider
         throw [System.NotImplementedException]::new("GetProviderInstallScriptBlock ($($this.Name))")
     }
 
-    [string] GetPackageInstallScript([ParcelPackage]$_package)
+    [string] GetPackageInstallScript([ParcelPackage]$_package, [hashtable]$_context)
     {
         throw [System.NotImplementedException]::new("GetPackageInstallScript ($($this.Name))")
     }
 
-    [string] GetPackageUninstallScript([ParcelPackage]$_package)
+    [string] GetPackageUninstallScript([ParcelPackage]$_package, [hashtable]$_context)
     {
         throw [System.NotImplementedException]::new("GetPackageUninstallScript ($($this.Name))")
     }

@@ -15,7 +15,7 @@ class WindowsFeatureParcelProvider : ParcelProvider
         return $true
     }
 
-    [string] GetPackageInstallScript([ParcelPackage]$_package)
+    [string] GetPackageInstallScript([ParcelPackage]$_package, [hashtable]$_context)
     {
         if ($this.IsOptionalFeature($_package)) {
             return "Enable-WindowsOptionalFeature -FeatureName $($_package.Name) -NoRestart -All -Online -ErrorAction Stop"
@@ -24,7 +24,7 @@ class WindowsFeatureParcelProvider : ParcelProvider
         return "Add-WindowsFeature -Name $($_package.Name) -IncludeAllSubFeature -IncludeManagementTools -ErrorAction Stop"
     }
 
-    [string] GetPackageUninstallScript([ParcelPackage]$_package)
+    [string] GetPackageUninstallScript([ParcelPackage]$_package, [hashtable]$_context)
     {
         if ($this.IsOptionalFeature($_package)) {
             return "Disable-WindowsOptionalFeature -FeatureName $($_package.Name) -NoRestart -Online -ErrorAction Stop"

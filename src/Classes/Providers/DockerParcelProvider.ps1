@@ -13,12 +13,12 @@ class DockerParcelProvider : ParcelProvider
     #       this will allow us to install more complicated packages, and see what is being installed.
     #       also can add a flag on providers of "install: false", which will disable self-install/check
 
-    [string] GetPackageInstallScript([ParcelPackage]$_package)
+    [string] GetPackageInstallScript([ParcelPackage]$_package, [hashtable]$_context)
     {
         return "docker pull $($_package.Name):$($this.GetVersionArgument($_package))"
     }
 
-    [string] GetPackageUninstallScript([ParcelPackage]$_package)
+    [string] GetPackageUninstallScript([ParcelPackage]$_package, [hashtable]$_context)
     {
         return "docker rmi --force $($_package.Name)"
     }

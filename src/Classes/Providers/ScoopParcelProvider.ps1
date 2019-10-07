@@ -16,12 +16,12 @@ class ScoopParcelProvider : ParcelProvider
         }
     }
 
-    [string] GetPackageInstallScript([ParcelPackage]$_package)
+    [string] GetPackageInstallScript([ParcelPackage]$_package, [hashtable]$_context)
     {
         return "scoop install $($_package.Name)@$($this.GetVersionArgument($_package))"
     }
 
-    [string] GetPackageUninstallScript([ParcelPackage]$_package)
+    [string] GetPackageUninstallScript([ParcelPackage]$_package, [hashtable]$_context)
     {
         return "scoop uninstall $($_package.Name) -p"
     }
