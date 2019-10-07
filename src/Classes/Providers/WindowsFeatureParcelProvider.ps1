@@ -18,7 +18,7 @@ class WindowsFeatureParcelProvider : ParcelProvider
     [string] GetPackageInstallScript([ParcelPackage]$_package)
     {
         if ($this.IsOptionalFeature($_package)) {
-            return "DISM /Online /Enable-Feature /All /FeatureName:$($_package.Name) /NoRestart -ErrorAction Stop"
+            return "DISM /Online /Enable-Feature /All /FeatureName:$($_package.Name) /NoRestart"
         }
 
         return "Add-WindowsFeature -Name $($_package.Name) -IncludeAllSubFeature -IncludeManagementTools -ErrorAction Stop"
@@ -42,8 +42,8 @@ class WindowsFeatureParcelProvider : ParcelProvider
     {
         if ($this.IsOptionalFeature($_package)) {
             $checkDismPackage = dism /online /get-featureinfo /featurename:$_package.Name 
-            $checkDismPackageState = $checkDismPackage -match "State"
-            if ($checkDismPackageState -like "*Disabled*")
+            $checkDismPackageState = $checkDismPackage -imatch "State"
+            if ($checkDismPackageState -ilike "*Disabled*")
             {
                 $checkDismPackageResult = $false
                 }
