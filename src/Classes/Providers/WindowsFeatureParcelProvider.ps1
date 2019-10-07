@@ -8,10 +8,6 @@ class WindowsFeatureParcelProvider : ParcelProvider
             throw 'Windows Features are only supported on Windows'
         }
 
-        # if ((Get-Host).Version.Major -gt '5') {
-        #     throw "Windows Features is only supported on PS5.0"
-        # }
-
         return $true
     }
 
@@ -27,7 +23,7 @@ class WindowsFeatureParcelProvider : ParcelProvider
     [string] GetPackageUninstallScript([ParcelPackage]$_package)
     {
         if ($this.IsOptionalFeature($_package)) {
-            return "Disable-WindowsOptionalFeature -FeatureName $($_package.Name) -NoRestart -Online -ErrorAction Stop"
+            return "DISM /online /Disable-feature /FeatureName:$($_package.Name) "
         }
 
         return "Remove-WindowsFeature -Name $($_package.Name) -IncludeManagementTools -ErrorAction Stop"
@@ -40,25 +36,26 @@ class WindowsFeatureParcelProvider : ParcelProvider
 
     [bool] TestPackageInstalled([ParcelPackage]$_package)
     {
-        if ($this.IsOptionalFeature($_package)) {
-            $checkDismPackage = dism /online /get-featureinfo /featurename:$_package.Name 
+        if ($this.IsOptionalFeature($_package)) 
+        {
+            
+            write-host $_package.name
+            $checkDismPackage = Invoke-Expression -Command "dism /online /get-featureinfo /featurename:$($_package.Name )" -ErrorAction Stop
             $checkDismPackageState = $checkDismPackage -imatch "State"
+            write-host $checkDismPackageState
             if ($checkDismPackageState -ilike "*Disabled*")
             {
-                $checkDismPackageResult = $false
-                }
-            else {
-                $checkDismPackageResult = $true
+                return $false
             }
-            
-         
-            return $checkDismPackageResult
+            else 
+            {
+                return $true
+            }
         }
-        else {
+        else 
+        {
         return ([bool](Get-WindowsFeature -Name $_package.Name -ErrorAction Ignore).Installed)
-            
         }
-
     }
 
     [string] GetSourceArgument([ParcelPackage]$_package)

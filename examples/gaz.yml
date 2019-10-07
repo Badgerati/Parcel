@@ -1,0 +1,4 @@
+---
+packages:
+- name: IIS-ManagementConsole
+  provider: winfeature
