@@ -18,7 +18,12 @@ class ScoopParcelProvider : ParcelProvider
 
     [string] GetPackageInstallScript([ParcelPackage]$_package, [hashtable]$_context)
     {
-        return "scoop install $($_package.Name)@$($this.GetVersionArgument($_package))"
+        $_version = $this.GetVersionArgument($_package)
+        if (![string]::IsNullOrWhiteSpace($_version)) {
+            $_version = "@$($_version)"
+        }
+
+        return "scoop install $($_package.Name)$($_version)"
     }
 
     [string] GetPackageUninstallScript([ParcelPackage]$_package, [hashtable]$_context)

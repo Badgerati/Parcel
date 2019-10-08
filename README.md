@@ -19,6 +19,7 @@ These are the currently support package providers (more to come!):
 * Homebrew
 * Docker
 * Windows Features
+* Apt-get
 
 ## Install
 
@@ -196,4 +197,25 @@ packages:
 packages:
 - name: Microsoft-Hyper-V
   provider: <winfeature|windows-feature>
+```
+
+### Apt-Get
+
+* Self-installation is not supported - if `apt-get` is not there, Parcel will fail
+* Sources are not supported
+
+```yaml
+packages:
+- name: vim
+  provider: aptget
+  version: latest
+```
+
+or:
+
+```yaml
+packages:
+- name: vim
+  provider: aptget
+  version: 2:7.4.1689-3ubuntu1.3
 ```

@@ -38,6 +38,11 @@ class WindowsFeatureParcelProvider : ParcelProvider
         return $null
     }
 
+    [string] GetProviderRemoveSourceScript([string]$_name, [string]$_url)
+    {
+        return $null
+    }
+
     [bool] TestPackageInstalled([ParcelPackage]$_package)
     {
         if ($this.IsOptionalFeature($_package)) {
