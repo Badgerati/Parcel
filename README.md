@@ -13,12 +13,12 @@ You define a package file using YAML, and Parcel will install/uninstall the pack
 
 These are the currently support package providers (more to come!):
 
-* Chocolatey (choco)
-* PowerShell Gallery (psgallery)
-* Scoop (scoop)
-* Homebrew (brew)
-* Docker (docker)
-* Windows Features (winfeature)
+* Chocolatey
+* PowerShell Gallery
+* Scoop
+* Homebrew
+* Docker
+* Windows Features
 
 ## Install
 
@@ -138,7 +138,7 @@ $parcel = @{
 ```yaml
 packages:
 - name: 7zip.install
-  provider: choco
+  provider: <choco|chocolatey>
   version: 19.0
 ```
 
@@ -170,8 +170,10 @@ packages:
 ```yaml
 packages:
 - name: p7zip
-  provider: brew
+  provider: <brew|homebrew>
 ```
+
+> If you face issues installing casks, try running: `sudo chown -R $USER:admin /usr/local/Caskroom`
 
 ### Docker
 
@@ -193,5 +195,5 @@ packages:
 ```yaml
 packages:
 - name: Microsoft-Hyper-V
-  provider: winfeature
+  provider: <winfeature|windows-feature>
 ```
