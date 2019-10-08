@@ -8,9 +8,9 @@ class WindowsFeatureParcelProvider : ParcelProvider
             throw 'Windows Features are only supported on Windows'
         }
 
-        # if ((Get-Host).Version.Major -gt '5') {
-        #     throw "Windows Features is only supported on PS5.0"
-        # }
+        if ((Get-Host).Version.Major -gt '5') {
+            throw "Windows Features is only supported on PS5.0"
+        }
 
         return $true
     }
@@ -18,7 +18,7 @@ class WindowsFeatureParcelProvider : ParcelProvider
     [string] GetPackageInstallScript([ParcelPackage]$_package)
     {
         if ($this.IsOptionalFeature($_package)) {
-            return "DISM /Online /Enable-Feature /All /FeatureName:$($_package.Name) /NoRestart -ErrorAction Stop"
+            return "Enable-WindowsOptionalFeature -FeatureName $($_package.Name) -NoRestart -All -Online -ErrorAction Stop"
         }
 
         return "Add-WindowsFeature -Name $($_package.Name) -IncludeAllSubFeature -IncludeManagementTools -ErrorAction Stop"
@@ -41,24 +41,10 @@ class WindowsFeatureParcelProvider : ParcelProvider
     [bool] TestPackageInstalled([ParcelPackage]$_package)
     {
         if ($this.IsOptionalFeature($_package)) {
-            $checkDismPackage = dism /online /get-featureinfo /featurename:$_package.Name 
-            $checkDismPackageState = $checkDismPackage -match "State"
-            if ($checkDismPackageState -like "*Disabled*")
-            {
-                $checkDismPackageResult = $false
-                }
-            else {
-                $checkDismPackageResult = $true
-            }
-            
-         
-            return $checkDismPackageResult
-        }
-        else {
-        return ([bool](Get-WindowsFeature -Name $_package.Name -ErrorAction Ignore).Installed)
-            
+            return ((Get-WindowsOptionalFeature -Online -FeatureName $_package.Name -ErrorAction Ignore).State -ieq 'enabled')
         }
 
+        return ([bool](Get-WindowsFeature -Name $_package.Name -ErrorAction Ignore).Installed)
     }
 
     [string] GetSourceArgument([ParcelPackage]$_package)
