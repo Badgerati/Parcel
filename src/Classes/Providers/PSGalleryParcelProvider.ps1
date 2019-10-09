@@ -44,6 +44,12 @@ class PSGalleryParcelProvider : ParcelProvider
         return ($result.Length -gt 0)
     }
 
+    [bool] TestPackageUninstalled([ParcelPackage]$_package)
+    {
+        $result = (Get-Module -Name $_package.Name -ListAvailable)
+        return ($result.Length -eq 0)
+    }
+
     [string] GetPackageLatestVersion([ParcelPackage]$_package)
     {
         return Invoke-Expression -Command "(Find-Module -Name $($_package.Name) $($this.GetSourceArgument($_package)) -ErrorAction Ignore).Version"
@@ -51,10 +57,6 @@ class PSGalleryParcelProvider : ParcelProvider
 
     [string] GetVersionArgument([ParcelPackage]$_package)
     {
-        if ($_package.IsLatest) {
-            return [string]::Empty
-        }
-
         return "-RequiredVersion $($_package.Version)"
     }
 

@@ -14,17 +14,12 @@ class AptGetParcelProvider : ParcelProvider
 
     [string] GetPackageInstallScript([ParcelPackage]$_package, [hashtable]$_context)
     {
-        $_version = $this.GetVersionArgument($_package)
-        if (![string]::IsNullOrWhiteSpace($_version)) {
-            $_version = "=$($_version)"
-        }
-
-        return "apt-get install --yes $($_package.Name)$($_version) 2>&1"
+        return "sudo apt-get install --yes $($_package.Name)=$($this.GetVersionArgument($_package)) 2>&1"
     }
 
     [string] GetPackageUninstallScript([ParcelPackage]$_package, [hashtable]$_context)
     {
-        return "apt-get remove --purge --yes $($_package.Name) 2>&1"
+        return "sudo apt-get remove --purge --yes $($_package.Name) 2>&1"
     }
 
     [string] GetProviderAddSourceScript([string]$_name, [string]$_url)
@@ -40,7 +35,17 @@ class AptGetParcelProvider : ParcelProvider
     [bool] TestPackageInstalled([ParcelPackage]$_package)
     {
         $result = (Invoke-Expression -Command "`$r = dpkg -s $($_package.Name) 2>&1; if (!`$?) { return `$null }; return `$r")
+        if ($null -eq $result) {
+            return $false
+        }
+
         return (($result -imatch "^version\:\s+$($this.GetVersionArgument($_package))").Length -gt 0)
+    }
+
+    [bool] TestPackageUninstalled([ParcelPackage]$_package)
+    {
+        $result = (Invoke-Expression -Command "`$r = dpkg -s $($_package.Name) 2>&1; if (!`$?) { return `$null }; return `$r")
+        return ($null -eq $result)
     }
 
     [string] GetPackageLatestVersion([ParcelPackage]$_package)
@@ -55,10 +60,6 @@ class AptGetParcelProvider : ParcelProvider
 
     [string] GetVersionArgument([ParcelPackage]$_package)
     {
-        if ($_package.IsLatest) {
-            return [string]::Empty
-        }
-
         return $_package.Version
     }
 }
