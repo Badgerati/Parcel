@@ -89,7 +89,7 @@ class ParcelFactory
                 $_provider = [DockerParcelProvider]::new()
             }
 
-            { @('winfeature', 'win-feature', 'windows-feature', 'windowsfeatures', 'windowsfeatures') -icontains $_name } {
+            { @('winfeature', 'win-feature', 'windows-feature', 'windowsfeatures', 'windows-features') -icontains $_name } {
                 $_provider = [WindowsFeatureParcelProvider]::new()
             }
 
