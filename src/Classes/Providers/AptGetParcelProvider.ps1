@@ -22,16 +22,6 @@ class AptGetParcelProvider : ParcelProvider
         return "sudo apt-get remove --purge --yes $($_package.Name) 2>&1"
     }
 
-    [string] GetProviderAddSourceScript([string]$_name, [string]$_url)
-    {
-        return $null
-    }
-
-    [string] GetProviderRemoveSourceScript([string]$_name, [string]$_url)
-    {
-        return $null
-    }
-
     [bool] TestPackageInstalled([ParcelPackage]$_package)
     {
         $result = (Invoke-Expression -Command "`$r = dpkg -s $($_package.Name) 2>&1; if (!`$?) { return `$null }; return `$r")
