@@ -20,6 +20,7 @@ These are the currently support package providers (more to come!):
 * Docker
 * Windows Features
 * Apt-get
+* Yum
 
 ## Install
 
@@ -78,9 +79,9 @@ There is also a scripts block that allows for defining pre/post scripts that run
 ```yaml
 ---
 packages:
-- name: <some-name>
-  names: <an array of names>
-  provider: <choco|scoop|psgallery|brew|docker|winfeature>
+- name: <package-name>
+  names: <an array of package names>
+  provider: provider-name>
   version: <version|empty|latest>
   source: <source>
   args:
@@ -218,4 +219,15 @@ packages:
 - name: vim
   provider: aptget
   version: 2:7.4.1689-3ubuntu1.3
+```
+
+### Yum
+
+* Self-installation is not supported - if `yum` is not there, Parcel will fail
+* Sources are not supported
+
+```yaml
+packages:
+- name: ansible
+  provider: yum
 ```
