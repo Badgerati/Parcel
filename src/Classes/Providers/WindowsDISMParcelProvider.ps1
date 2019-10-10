@@ -21,11 +21,6 @@ class WindowsDISMParcelProvider : ParcelProvider
         return "Invoke-Expression -Command 'dism /online /disable-feature /featurename:$($_package.Name)'"
     }
 
-    [string] GetProviderAddSourceScript([string]$_name, [string]$_url)
-    {
-        return $null
-    }
-
     [bool] TestPackageInstalled([ParcelPackage]$_package)
     {
         $checkDismPackage = Invoke-Expression -Command "dism /online /get-featureinfo /featurename:$($_package.Name )" -ErrorAction Stop
