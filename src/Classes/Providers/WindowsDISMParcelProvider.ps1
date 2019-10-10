@@ -13,12 +13,12 @@ class WindowsDISMParcelProvider : ParcelProvider
 
     [string] GetPackageInstallScript([ParcelPackage]$_package)
     {
-        return "Invoke-Expression -Command 'DISM /Online /Enable-Feature /All /FeatureName:$($_package.Name) /NoRestart'"
+        return "Invoke-Expression -Command 'dism /online /enable-feature /all /featurename:$($_package.Name) /norestart'"
     }
 
     [string] GetPackageUninstallScript([ParcelPackage]$_package)
     {
-        return "Invoke-Expression -Command 'DISM /online /Disable-feature /FeatureName:$($_package.Name)'"
+        return "Invoke-Expression -Command 'dism /online /disable-feature /featurename:$($_package.Name)'"
     }
 
     [string] GetProviderAddSourceScript([string]$_name, [string]$_url)
@@ -30,10 +30,7 @@ class WindowsDISMParcelProvider : ParcelProvider
     {
         $checkDismPackage = Invoke-Expression -Command "dism /online /get-featureinfo /featurename:$($_package.Name )" -ErrorAction Stop
         $checkDismPackageState = $checkDismPackage -imatch "State"
-        if ($checkDismPackageState -ilike "*Disabled*")
-        {return $false}
-        else 
-        {return $true}
+        return ($checkDismPackageState -inotlike "*Disabled*")
     }
 
     [string] GetSourceArgument([ParcelPackage]$_package)
