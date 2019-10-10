@@ -39,7 +39,7 @@ class WindowsDISMParcelProvider : ParcelProvider
             return [string]::Empty
         }
 
-        return "-Source $($_source)"
+        return "/source $($_source)"
     }
 
   
