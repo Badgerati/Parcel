@@ -479,8 +479,8 @@ function Test-ParcelAdminUser
 {
     # check the current platform, if it's unix then check sudo
     if ($PSVersionTable.Platform -ieq 'unix') {
-        Invoke-Expression -Command 'sudo -n true' | Out-Null
-        return ($?)
+        Invoke-Expression -Command 'sudo -n true 2>&1' | Out-Null
+        return ($LASTEXITCODE -eq 0)
     }
 
     try {
