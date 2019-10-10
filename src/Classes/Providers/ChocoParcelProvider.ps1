@@ -16,12 +16,12 @@ class ChocoParcelProvider : ParcelProvider
         }
     }
 
-    [string] GetPackageInstallScript([ParcelPackage]$_package)
+    [string] GetPackageInstallScript([ParcelPackage]$_package, [hashtable]$_context)
     {
         return "choco install $($_package.Name) --no-progress -y -f --allow-unofficial --allow-downgrade"
     }
 
-    [string] GetPackageUninstallScript([ParcelPackage]$_package)
+    [string] GetPackageUninstallScript([ParcelPackage]$_package, [hashtable]$_context)
     {
         return "choco uninstall $($_package.Name) --no-progress -y -f -x --allversions"
     }

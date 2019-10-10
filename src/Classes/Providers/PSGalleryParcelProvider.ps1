@@ -18,12 +18,12 @@ class PSGalleryParcelProvider : ParcelProvider
         }
     }
 
-    [string] GetPackageInstallScript([ParcelPackage]$_package)
+    [string] GetPackageInstallScript([ParcelPackage]$_package, [hashtable]$_context)
     {
         return "Install-Module -Name $($_package.Name) -Force -AllowClobber -SkipPublisherCheck -ErrorAction Stop"
     }
 
-    [string] GetPackageUninstallScript([ParcelPackage]$_package)
+    [string] GetPackageUninstallScript([ParcelPackage]$_package, [hashtable]$_context)
     {
         return "Uninstall-Module -Name $($_package.Name) -Force -AllVersions -ErrorAction Stop"
     }
