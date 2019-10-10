@@ -52,7 +52,7 @@ class ChocoParcelProvider : ParcelProvider
     {
         $result = Invoke-Expression -Command "choco search $($_package.Name) --exact $($this.GetSourceArgument($_package)) --allow-unofficial"
 
-        $regex = "$($_package.Name)\s+(?<version>[0-9\.]+)"
+        $regex = "$($_package.Name)\s+(?<version>[0-9\._]+)"
         $result = @(@($result) -imatch $regex)
 
         if (($result.Length -gt 0) -and ($result[0] -imatch $regex)) {

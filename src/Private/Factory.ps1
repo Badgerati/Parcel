@@ -477,9 +477,10 @@ function Update-ParcelEnvironmentVariables
 
 function Test-ParcelAdminUser
 {
-    # check the current platform, if it's unix then return true
+    # check the current platform, if it's unix then check sudo
     if ($PSVersionTable.Platform -ieq 'unix') {
-        return $true
+        Invoke-Expression -Command 'sudo -n true' | Out-Null
+        return ($?)
     }
 
     try {

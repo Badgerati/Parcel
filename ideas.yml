@@ -1,5 +1,6 @@
 # parcel.yml
-# yes:    choco, scoop, yum, apt-get, ps-gallery, nuget, win-features, script, brew, docker
+# done:   choco, scoop, ps-gallery, brew, docker
+# yes:    yum, apt-get, nuget, win-features, script
 # maybe:  git, npm, yarn, bower (all global)
 # others: windows-appx (win-store), snap
 

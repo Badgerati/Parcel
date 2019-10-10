@@ -93,6 +93,10 @@ class ParcelFactory
                 $_provider = [WindowsFeatureParcelProvider]::new()
             }
 
+            { @('aptget', 'apt-get') -icontains $_name} {
+                $_provider = [AptGetParcelProvider]::new()
+            }
+
             default {
                 throw "Invalid package provider supplied: $($_name)"
             }
