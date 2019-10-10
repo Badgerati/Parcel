@@ -26,3 +26,5 @@ packages:
   provider: choco
 - name: 7zip
   provider: scoop
+- name: treesizefree
+  provider: choco
