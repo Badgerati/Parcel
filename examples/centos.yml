@@ -1,0 +1,7 @@
+---
+packages:
+- name: Pester
+  provider: psgallery
+
+- name: git
+  provider: yum
