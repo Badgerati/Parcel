@@ -50,8 +50,5 @@ class WindowsDISMParcelProvider : ParcelProvider
         return "-Source $($_source)"
     }
 
-    [bool] IsOptionalFeature([ParcelPackage]$_package)
-    {
-        return $true
-    }
+  
 }
