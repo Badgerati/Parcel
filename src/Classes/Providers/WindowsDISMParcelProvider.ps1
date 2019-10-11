@@ -5,7 +5,7 @@ class WindowsDISMParcelProvider : ParcelProvider
     [bool] TestProviderInstalled([hashtable]$_context)
     {
         if ($_context.os.type -ine 'windows') {
-            throw 'Windows DISM is only supported on Windows.....'
+            throw 'Windows DISM is only supported on Windows...'
         }
 
         return $true
