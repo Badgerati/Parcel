@@ -70,7 +70,7 @@ The properties that are currently supported are in packages are:
 * args (extra arguments to run, can also be split into `install:` and `uninstall:`)
 * ensure (can be empty, or present/absent)
 * os (can be windows, linux, or macos - package will only run if running on that OS)
-* environment (can be anything, default is 'none'. packages will run based on `-Environment`)
+* environment (can be anything, default is 'all'. packages will run based on `-Environment`)
 * when (powershell script that returns a boolean value, if true then package will run)
 * pre/post scritps (allows you to define powershell scripts to run pre/post install/uninstall)
 
@@ -89,7 +89,7 @@ packages:
     uninstall: <custom-uninstall-arguments>
   ensure: <present|absent|neutral (default)>
   os: <linux|macos|windows|all (default)>
-  environment: <environment>
+  environment: <environment(s)>
   when: <powershell-query>
   pre:
     install: <powershell-script>
@@ -158,7 +158,7 @@ packages:
 ```yaml
 packages:
 - name: Pester
-  provider: psgallery
+  provider: <psgallery|ps-gallery>
   version: 4.8.0
 ```
 
@@ -197,7 +197,7 @@ packages:
 ```yaml
 packages:
 - name: Microsoft-Hyper-V
-  provider: <winfeature|windows-feature>
+  provider: <winfeature|windows-feature|win-feature>
 ```
 
 ### Apt-Get
@@ -208,7 +208,7 @@ packages:
 ```yaml
 packages:
 - name: vim
-  provider: aptget
+  provider: <aptget|apt-get>
   version: latest
 ```
 
@@ -217,7 +217,7 @@ or:
 ```yaml
 packages:
 - name: vim
-  provider: aptget
+  provider: <aptget|apt-get>
   version: 2:7.4.1689-3ubuntu1.3
 ```
 

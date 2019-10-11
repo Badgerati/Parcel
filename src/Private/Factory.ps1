@@ -193,7 +193,7 @@ function Get-ParcelContext
     # set environment
     $ctx.environment = $Environment
     if ([string]::IsNullOrWhiteSpace($ctx.environment)) {
-        $ctx.environment = 'none'
+        $ctx.environment = 'all'
     }
 
     # return the context
