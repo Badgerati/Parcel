@@ -47,7 +47,7 @@ class WindowsFeatureParcelProvider : ParcelProvider
         return ([bool](Get-WindowsFeature -Name $_package.Name -ErrorAction Ignore).Installed)
     }
 
-    [string] GetSourceArgument([ParcelPackage]$_package)
+    [array] GetSourceArgument([ParcelPackage]$_package)
     {
         $_source = $_package.Source
         if ([string]::IsNullOrWhiteSpace($_source)) {

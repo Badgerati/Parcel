@@ -58,7 +58,7 @@ class PSGalleryParcelProvider : ParcelProvider
         return "-RequiredVersion $($_package.Version)"
     }
 
-    [string] GetSourceArgument([ParcelPackage]$_package)
+    [array] GetSourceArgument([ParcelPackage]$_package)
     {
         $_source = $_package.Source
         if ([string]::IsNullOrWhiteSpace($_source)) {

@@ -28,7 +28,7 @@ class WindowsDISMParcelProvider : ParcelProvider
         return ($checkDismPackageState -inotlike "*Disabled*")
     }
 
-    [string] GetSourceArgument([ParcelPackage]$_package)
+    [array] GetSourceArgument([ParcelPackage]$_package)
     {
         $_source = $_package.Source
         if ([string]::IsNullOrWhiteSpace($_source)) {
@@ -39,7 +39,11 @@ class WindowsDISMParcelProvider : ParcelProvider
             return [string]::Empty
         }
 
-        return "/source $($_source)"
+        [string]$sourcesString = $null
+        foreach($src in $_source)
+        {$sourcesString = $sourcesString += "/source:$($src) "}
+
+        return $sourcesString
     }
 
   

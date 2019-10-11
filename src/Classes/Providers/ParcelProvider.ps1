@@ -320,7 +320,12 @@ class ParcelProvider
         return [string]::Empty
     }
 
-    [string] GetSourceArgument([ParcelPackage]$_package)
+    [array] GetSourceArgument([ParcelPackage]$_package)
+    {
+        return [array]::Empty
+    }
+
+    [string] GetImageArgument([ParcelPackage]$_package)
     {
         return [string]::Empty
     }
