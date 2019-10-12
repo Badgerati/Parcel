@@ -4,6 +4,7 @@ packages:
   provider: winfeature
 - name: RSAT
   provider: DISM
+  source: c:\windows|sources\winsxs
 - name: RSAT
   provider: windowsfeatures
 - name: ActiveDirectory-PowerShell
