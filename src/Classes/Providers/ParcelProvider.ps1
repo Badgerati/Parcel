@@ -325,11 +325,6 @@ class ParcelProvider
         return [array]::Empty
     }
 
-    [string] GetImageArgument([ParcelPackage]$_package)
-    {
-        return [string]::Empty
-    }
-
     [scriptblock] GetProviderInstallScriptBlock([hashtable]$_context)
     {
         throw [System.NotImplementedException]::new("GetProviderInstallScriptBlock ($($this.Name))")

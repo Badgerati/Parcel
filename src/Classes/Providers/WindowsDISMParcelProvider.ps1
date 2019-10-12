@@ -28,7 +28,7 @@ class WindowsDISMParcelProvider : ParcelProvider
         return ($checkDismPackageState -inotlike "*Disabled*")
     }
 
-    [array] GetSourceArgument([ParcelPackage]$_package)
+    [string] GetSourceArgument([ParcelPackage]$_package)
     {
         $_source = $_package.Source
         if ([string]::IsNullOrWhiteSpace($_source)) {
