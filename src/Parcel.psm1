@@ -35,6 +35,7 @@ $classes = @(
     "$($root)/Classes/Providers/BrewParcelProvider.ps1",
     "$($root)/Classes/Providers/DockerParcelProvider.ps1",
     "$($root)/Classes/Providers/WindowsFeatureParcelProvider.ps1",
+    "$($root)/Classes/Providers/WindowsDISMParcelProvider.ps1",
     "$($root)/Classes/ParcelFactory.ps1"
 )
 
