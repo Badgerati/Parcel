@@ -320,7 +320,7 @@ class ParcelProvider
         return [string]::Empty
     }
 
-    [array] GetSourceArgument([ParcelPackage]$_package)
+    [string] GetSourceArgument([ParcelPackage]$_package)
     {
         return [string]::Empty
     }
