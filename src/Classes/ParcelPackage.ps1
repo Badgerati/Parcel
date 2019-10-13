@@ -2,7 +2,7 @@ class ParcelPackage
 {
     [string] $Name
     [string] $ProviderName
-    [string] $Source
+    [string[]] $Source
     [ParcelArguments] $Arguments
 
     [string] $Version

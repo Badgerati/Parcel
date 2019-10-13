@@ -1,0 +1,29 @@
+---
+packages:
+- name: docker
+  provider: brew
+- name: spotify
+  provider: homebrew
+- name: slack
+  provider: homebrew
+  version: 4.0.3
+- name: vagrant
+  provider: brew
+- name: cheatsheet
+  provider: brew
+- name: evernote
+  provider: brew
+- name: slack
+  provider: brew
+- name: visual-studio-code
+  provider: brew
+- name: awscli
+  provider: brew 
+- name: azure-cli
+  provider: brew
+- name: vlc
+  provider: brew
+- name: skitch
+  provider: brew
+- name: powershell
+  provider: brew

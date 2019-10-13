@@ -89,8 +89,12 @@ class ParcelFactory
                 $_provider = [DockerParcelProvider]::new()
             }
 
-            { @('winfeature', 'win-feature', 'windows-feature') -icontains $_name } {
+            { @('winfeature', 'win-feature', 'windows-feature', 'windowsfeatures', 'windows-features') -icontains $_name } {
                 $_provider = [WindowsFeatureParcelProvider]::new()
+            }
+
+            { @('dism', 'windowsdism', 'win-dism') -icontains $_name } {
+                $_provider = [WindowsDISMParcelProvider]::new()
             }
 
             { @('aptget', 'apt-get') -icontains $_name} {

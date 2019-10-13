@@ -56,14 +56,14 @@ class WindowsFeatureParcelProvider : ParcelProvider
     {
         $_source = $_package.Source
         if ([string]::IsNullOrWhiteSpace($_source)) {
-            $_source = $this.DefaultSource
+            $_source = @($this.DefaultSource)
         }
 
-        if ([string]::IsNullOrWhiteSpace($_source)) {
+        if ([string]::IsNullOrWhiteSpace($_source[0])) {
             return [string]::Empty
         }
 
-        return "-Source $($_source)"
+        return "-Source $($_source[0])"
     }
 
     [bool] IsOptionalFeature([ParcelPackage]$_package)
