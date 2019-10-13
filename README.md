@@ -191,13 +191,23 @@ packages:
 
 ### Windows Features
 
-* Only support in Windows
+* Only supported in Windows (Desktop PowerShell only)
 * Version is always latest (as features have no version)
 
 ```yaml
 packages:
 - name: Microsoft-Hyper-V
   provider: <winfeature|windows-feature|win-feature>
+```
+
+### DISM
+
+* Only supported in Windows (Desktop/Core PowerShell)
+* Version is always latest
+
+```yaml
+- name: ActiveDirectory-PowerShell
+  provider: <dism>
 ```
 
 ### Apt-Get
