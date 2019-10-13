@@ -32,15 +32,15 @@ class ParcelProvider
 
     [ParcelStatus] Install([ParcelPackage]$_package, [hashtable]$_context, [bool]$_dryRun)
     {
-        # check if the provider is installed
-        if (!$this.TestProviderInstalled($_context)) {
-            throw "The $($this.Name) provider is not installed"
-        }
-
         # check if package is valid
         $status = $_package.TestPackage($_context)
         if ($null -ne $status) {
             return $status
+        }
+
+        # check if the provider is installed
+        if (!$this.TestProviderInstalled($_context)) {
+            throw "The $($this.Name) provider is not installed"
         }
 
         # do nothing if package is already installed

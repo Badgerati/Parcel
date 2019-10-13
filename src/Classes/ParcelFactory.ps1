@@ -77,7 +77,7 @@ class ParcelFactory
                 $_provider = [PSGalleryParcelProvider]::new()
             }
 
-            'scoop' {
+            { @('scoop') -icontains $_name} {
                 $_provider = [ScoopParcelProvider]::new()
             }
 
@@ -85,7 +85,7 @@ class ParcelFactory
                 $_provider = [BrewParcelProvider]::new()
             }
 
-            'docker' {
+            { @('docker') -icontains $_name} {
                 $_provider = [DockerParcelProvider]::new()
             }
 
@@ -95,6 +95,14 @@ class ParcelFactory
 
             { @('dism', 'windowsdism', 'win-dism') -icontains $_name } {
                 $_provider = [WindowsDISMParcelProvider]::new()
+            }
+
+            { @('aptget', 'apt-get') -icontains $_name} {
+                $_provider = [AptGetParcelProvider]::new()
+            }
+
+            { @('yum') -icontains $_name} {
+                $_provider = [YumParcelProvider]::new()
             }
 
             default {

@@ -32,19 +32,14 @@ class WindowsDISMParcelProvider : ParcelProvider
     {
         $_source = $_package.Source
         if ([string]::IsNullOrWhiteSpace($_source)) {
-            $_source = $this.DefaultSource
+            $_source = @($this.DefaultSource)
         }
 
         if ([string]::IsNullOrWhiteSpace($_source)) {
             return [string]::Empty
         }
 
-        [string]$sourcesString = $null
-        foreach($src in $_source)
-        {$sourcesString = $sourcesString += "/source:$($src) "}
-
-        return $sourcesString
+        return (($_source | ForEach-Object { "/source:$($_)" }) -join ' ')
     }
 
-  
 }

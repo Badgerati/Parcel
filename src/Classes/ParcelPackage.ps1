@@ -10,7 +10,7 @@ class ParcelPackage
 
     [ParcelEnsureType] $Ensure
     [string] $When
-    [string] $Environment
+    [string[]] $Environment
     [ParcelOSType] $OS
 
     [ParcelScripts] $Scripts
@@ -30,7 +30,7 @@ class ParcelPackage
 
         # set environment to default
         if ([string]::IsNullOrWhiteSpace($_package.environment)) {
-            $_package.environment = 'none'
+            $_package.environment = @('all')
         }
 
         # set os to default
@@ -57,7 +57,7 @@ class ParcelPackage
 
         $this.Ensure = [ParcelEnsureType]$_package.ensure
         $this.OS = $_package.os
-        $this.Environment = $_package.environment
+        $this.Environment = @($_package.environment)
         $this.When = $_package.when
 
         # set the scripts
@@ -89,20 +89,16 @@ class ParcelPackage
 
     [ParcelStatus] TestEnvironment([string]$_environment)
     {
-        if ([string]::IsNullOrWhiteSpace($_environment) -or ('none' -ieq $_environment)) {
+        if (($this.Environment.Length -eq 0) -or ($this.Environment.Length -eq 1 -and $this.Environment[0] -ieq 'all')) {
             return $null
         }
 
-        if ([string]::IsNullOrWhiteSpace($this.Environment) -or ('none' -ieq $this.Environment)) {
-            return $null
-        }
-
-        $valid = ($_environment -ieq $this.Environment)
+        $valid = ($this.Environment -icontains $_environment)
         if ($valid) {
             return $null
         }
 
-        return [ParcelStatus]::new('Skipped', "Wrong environment [$($this.Environment) =/= $($_environment)]")
+        return [ParcelStatus]::new('Skipped', "Wrong environment [$($this.Environment -join ', ') =/= $($_environment)]")
     }
 
     [ParcelStatus] TestOS([string]$_os)

@@ -19,6 +19,8 @@ These are the currently support package providers (more to come!):
 * Homebrew
 * Docker
 * Windows Features
+* Apt-get
+* Yum
 
 ## Install
 
@@ -68,7 +70,7 @@ The properties that are currently supported are in packages are:
 * args (extra arguments to run, can also be split into `install:` and `uninstall:`)
 * ensure (can be empty, or present/absent)
 * os (can be windows, linux, or macos - package will only run if running on that OS)
-* environment (can be anything, default is 'none'. packages will run based on `-Environment`)
+* environment (can be anything, default is 'all'. packages will run based on `-Environment`)
 * when (powershell script that returns a boolean value, if true then package will run)
 * pre/post scritps (allows you to define powershell scripts to run pre/post install/uninstall)
 
@@ -77,9 +79,9 @@ There is also a scripts block that allows for defining pre/post scripts that run
 ```yaml
 ---
 packages:
-- name: <some-name>
-  names: <an array of names>
-  provider: <choco|scoop|psgallery|brew|docker|winfeature>
+- name: <package-name>
+  names: <an array of package names>
+  provider: provider-name>
   version: <version|empty|latest>
   source: <source>
   args:
@@ -87,7 +89,7 @@ packages:
     uninstall: <custom-uninstall-arguments>
   ensure: <present|absent|neutral (default)>
   os: <linux|macos|windows|all (default)>
-  environment: <environment>
+  environment: <environment(s)>
   when: <powershell-query>
   pre:
     install: <powershell-script>
@@ -156,7 +158,7 @@ packages:
 ```yaml
 packages:
 - name: Pester
-  provider: psgallery
+  provider: <psgallery|ps-gallery>
   version: 4.8.0
 ```
 
@@ -195,5 +197,37 @@ packages:
 ```yaml
 packages:
 - name: Microsoft-Hyper-V
-  provider: <winfeature|windows-feature>
+  provider: <winfeature|windows-feature|win-feature>
+```
+
+### Apt-Get
+
+* Self-installation is not supported - if `apt-get` is not there, Parcel will fail
+* Sources are not supported
+
+```yaml
+packages:
+- name: vim
+  provider: <aptget|apt-get>
+  version: latest
+```
+
+or:
+
+```yaml
+packages:
+- name: vim
+  provider: <aptget|apt-get>
+  version: 2:7.4.1689-3ubuntu1.3
+```
+
+### Yum
+
+* Self-installation is not supported - if `yum` is not there, Parcel will fail
+* Sources are not supported
+
+```yaml
+packages:
+- name: ansible
+  provider: yum
 ```

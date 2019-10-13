@@ -193,7 +193,7 @@ function Get-ParcelContext
     # set environment
     $ctx.environment = $Environment
     if ([string]::IsNullOrWhiteSpace($ctx.environment)) {
-        $ctx.environment = 'none'
+        $ctx.environment = 'all'
     }
 
     # return the context
@@ -477,9 +477,10 @@ function Update-ParcelEnvironmentVariables
 
 function Test-ParcelAdminUser
 {
-    # check the current platform, if it's unix then return true
+    # check the current platform, if it's unix then check sudo
     if ($PSVersionTable.Platform -ieq 'unix') {
-        return $true
+        Invoke-Expression -Command 'sudo -n true 2>&1' | Out-Null
+        return ($LASTEXITCODE -eq 0)
     }
 
     try {
