@@ -322,7 +322,7 @@ class ParcelProvider
 
     [array] GetSourceArgument([ParcelPackage]$_package)
     {
-        return [array]::Empty
+        return [string]::Empty
     }
 
     [scriptblock] GetProviderInstallScriptBlock([hashtable]$_context)
