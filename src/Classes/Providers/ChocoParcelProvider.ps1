@@ -2,13 +2,13 @@ class ChocoParcelProvider : ParcelProvider
 {
     ChocoParcelProvider() : base('Chocolatey', $false, 'chocolatey') {}
 
-    [bool] TestProviderInstalled()
+    [bool] TestProviderInstalled([hashtable]$_context)
     {
         $cmd = Get-Command -Name 'choco' -ErrorAction Ignore
         return ($null -ne $cmd)
     }
 
-    [scriptblock] GetProviderInstallScriptBlock()
+    [scriptblock] GetProviderInstallScriptBlock([hashtable]$_context)
     {
         return {
             Set-ExecutionPolicy Bypass -Scope Process -Force | Out-Null
@@ -16,12 +16,12 @@ class ChocoParcelProvider : ParcelProvider
         }
     }
 
-    [string] GetPackageInstallScript([ParcelPackage]$_package)
+    [string] GetPackageInstallScript([ParcelPackage]$_package, [hashtable]$_context)
     {
         return "choco install $($_package.Name) --no-progress -y -f --allow-unofficial --allow-downgrade"
     }
 
-    [string] GetPackageUninstallScript([ParcelPackage]$_package)
+    [string] GetPackageUninstallScript([ParcelPackage]$_package, [hashtable]$_context)
     {
         return "choco uninstall $($_package.Name) --no-progress -y -f -x --allversions"
     }
@@ -52,7 +52,7 @@ class ChocoParcelProvider : ParcelProvider
     {
         $result = Invoke-Expression -Command "choco search $($_package.Name) --exact $($this.GetSourceArgument($_package)) --allow-unofficial"
 
-        $regex = "$($_package.Name)\s+(?<version>[0-9\.]+)"
+        $regex = "$($_package.Name)\s+(?<version>[0-9\._]+)"
         $result = @(@($result) -imatch $regex)
 
         if (($result.Length -gt 0) -and ($result[0] -imatch $regex)) {
@@ -89,7 +89,7 @@ class ChocoParcelProvider : ParcelProvider
 
     [string] GetVersionArgument([ParcelPackage]$_package)
     {
-        if ([string]::IsNullOrWhiteSpace($_package.Version) -or ($_package.Version -ieq 'latest')) {
+        if ($_package.IsLatest) {
             return [string]::Empty
         }
 
@@ -100,13 +100,13 @@ class ChocoParcelProvider : ParcelProvider
     {
         $_source = $_package.Source
         if ([string]::IsNullOrWhiteSpace($_source)) {
-            $_source = $this.DefaultSource
+            $_source = @($this.DefaultSource)
         }
 
-        if ([string]::IsNullOrWhiteSpace($_source)) {
+        if ([string]::IsNullOrWhiteSpace($_source[0])) {
             return [string]::Empty
         }
 
-        return "--source $($_source)"
+        return "--source $($_source[0])"
     }
 }

@@ -34,7 +34,7 @@ class ParcelFactory
         $this.Providers[$_name] = $_provider
     }
 
-    [int] InstallProviders([bool]$_dryRun)
+    [int] InstallProviders([hashtable]$_context, [bool]$_dryRun)
     {
         $_installed = 0
 
@@ -42,13 +42,15 @@ class ParcelFactory
         {
             $_provider = $this.Providers[$_name]
 
-            if ($_provider.TestProviderInstalled()) {
+            # do nothing if provider is installed
+            if ($_provider.TestProviderInstalled($_context)) {
                 continue
             }
 
+            # otherwise, attempt at installing it
             Write-ParcelPackageHeader -Message "$($_provider.Name) [Provider]"
 
-            $result = $_provider.InstallProvider($_dryRun)
+            $result = $_provider.InstallProvider($_context, $_dryRun)
             $result.WriteStatusMessage($_dryRun)
             $_installed++
 
@@ -67,16 +69,40 @@ class ParcelFactory
         $_provider = $null
 
         switch ($_name.ToLowerInvariant()) {
-            'choco' {
+            { @('choco', 'chocolatey') -icontains $_name } {
                 $_provider = [ChocoParcelProvider]::new()
             }
 
-            'psgallery' {
+            { @('psgallery', 'ps-gallery') -icontains $_name } {
                 $_provider = [PSGalleryParcelProvider]::new()
             }
 
-            'scoop' {
+            { @('scoop') -icontains $_name} {
                 $_provider = [ScoopParcelProvider]::new()
+            }
+
+            { @('brew', 'homebrew') -icontains $_name } {
+                $_provider = [BrewParcelProvider]::new()
+            }
+
+            { @('docker') -icontains $_name} {
+                $_provider = [DockerParcelProvider]::new()
+            }
+
+            { @('winfeature', 'win-feature', 'windows-feature', 'windowsfeatures', 'windows-features') -icontains $_name } {
+                $_provider = [WindowsFeatureParcelProvider]::new()
+            }
+
+            { @('dism', 'windowsdism', 'win-dism') -icontains $_name } {
+                $_provider = [WindowsDISMParcelProvider]::new()
+            }
+
+            { @('aptget', 'apt-get') -icontains $_name} {
+                $_provider = [AptGetParcelProvider]::new()
+            }
+
+            { @('yum') -icontains $_name} {
+                $_provider = [YumParcelProvider]::new()
             }
 
             default {

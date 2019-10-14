@@ -2,7 +2,7 @@ class PSGalleryParcelProvider : ParcelProvider
 {
     PSGalleryParcelProvider() : base('PowerShell Gallery', $false, 'PSGallery') {}
 
-    [bool] TestProviderInstalled()
+    [bool] TestProviderInstalled([hashtable]$_context)
     {
         if ((Get-Host).Version.Major -gt '5') {
             return $true
@@ -11,19 +11,19 @@ class PSGalleryParcelProvider : ParcelProvider
         return ($null -ne (Get-PackageProvider -Name NuGet -ListAvailable -ErrorAction Ignore))
     }
 
-    [scriptblock] GetProviderInstallScriptBlock()
+    [scriptblock] GetProviderInstallScriptBlock([hashtable]$_context)
     {
         return {
             Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force | Out-Null
         }
     }
 
-    [string] GetPackageInstallScript([ParcelPackage]$_package)
+    [string] GetPackageInstallScript([ParcelPackage]$_package, [hashtable]$_context)
     {
         return "Install-Module -Name $($_package.Name) -Force -AllowClobber -SkipPublisherCheck -ErrorAction Stop"
     }
 
-    [string] GetPackageUninstallScript([ParcelPackage]$_package)
+    [string] GetPackageUninstallScript([ParcelPackage]$_package, [hashtable]$_context)
     {
         return "Uninstall-Module -Name $($_package.Name) -Force -AllVersions -ErrorAction Stop"
     }
@@ -44,6 +44,12 @@ class PSGalleryParcelProvider : ParcelProvider
         return ($result.Length -gt 0)
     }
 
+    [bool] TestPackageUninstalled([ParcelPackage]$_package)
+    {
+        $result = (Get-Module -Name $_package.Name -ListAvailable)
+        return ($result.Length -eq 0)
+    }
+
     [string] GetPackageLatestVersion([ParcelPackage]$_package)
     {
         return Invoke-Expression -Command "(Find-Module -Name $($_package.Name) $($this.GetSourceArgument($_package)) -ErrorAction Ignore).Version"
@@ -51,10 +57,6 @@ class PSGalleryParcelProvider : ParcelProvider
 
     [string] GetVersionArgument([ParcelPackage]$_package)
     {
-        if ([string]::IsNullOrWhiteSpace($_package.Version) -or ($_package.Version -ieq 'latest')) {
-            return [string]::Empty
-        }
-
         return "-RequiredVersion $($_package.Version)"
     }
 
@@ -62,13 +64,13 @@ class PSGalleryParcelProvider : ParcelProvider
     {
         $_source = $_package.Source
         if ([string]::IsNullOrWhiteSpace($_source)) {
-            $_source = $this.DefaultSource
+            $_source = @($this.DefaultSource)
         }
 
-        if ([string]::IsNullOrWhiteSpace($_source)) {
+        if ([string]::IsNullOrWhiteSpace($_source[0])) {
             return [string]::Empty
         }
 
-        return "-Repository $($_source)"
+        return "-Repository $($_source[0])"
     }
 }

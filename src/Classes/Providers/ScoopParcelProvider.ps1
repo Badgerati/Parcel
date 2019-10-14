@@ -2,13 +2,13 @@ class ScoopParcelProvider : ParcelProvider
 {
     ScoopParcelProvider() : base('Scoop', $true, [string]::Empty) {}
 
-    [bool] TestProviderInstalled()
+    [bool] TestProviderInstalled([hashtable]$_context)
     {
         $cmd = Get-Command -Name 'scoop' -ErrorAction Ignore
         return ($null -ne $cmd)
     }
 
-    [scriptblock] GetProviderInstallScriptBlock()
+    [scriptblock] GetProviderInstallScriptBlock([hashtable]$_context)
     {
         return {
             Set-ExecutionPolicy RemoteSigned -Scope Process -Force | Out-Null
@@ -16,12 +16,17 @@ class ScoopParcelProvider : ParcelProvider
         }
     }
 
-    [string] GetPackageInstallScript([ParcelPackage]$_package)
+    [string] GetPackageInstallScript([ParcelPackage]$_package, [hashtable]$_context)
     {
-        return "scoop install $($_package.Name)@$($this.GetVersionArgument($_package))"
+        $_version = $this.GetVersionArgument($_package)
+        if (![string]::IsNullOrWhiteSpace($_version)) {
+            $_version = "@$($_version)"
+        }
+
+        return "scoop install $($_package.Name)$($_version)"
     }
 
-    [string] GetPackageUninstallScript([ParcelPackage]$_package)
+    [string] GetPackageUninstallScript([ParcelPackage]$_package, [hashtable]$_context)
     {
         return "scoop uninstall $($_package.Name) -p"
     }
@@ -39,7 +44,7 @@ class ScoopParcelProvider : ParcelProvider
     [bool] TestPackageInstalled([ParcelPackage]$_package)
     {
         $result = Invoke-ParcelPowershell -Command "scoop list $($_package.Name)"
-        $result = ($result -imatch "^\s*$($_package.Name)\s+$($this.GetVersionArgument($_package))")
+        $result = (@($result) -imatch "^\s*$($_package.Name)\s+$($this.GetVersionArgument($_package))")
         return ((@($result) -imatch "^\s*$($_package.Name)\s+[0-9\._]+").Length -gt 0)
     }
 
@@ -65,7 +70,7 @@ class ScoopParcelProvider : ParcelProvider
 
     [string] GetVersionArgument([ParcelPackage]$_package)
     {
-        if ([string]::IsNullOrWhiteSpace($_package.Version) -or ($_package.Version -ieq 'latest')) {
+        if ($_package.IsLatest) {
             return [string]::Empty
         }
 

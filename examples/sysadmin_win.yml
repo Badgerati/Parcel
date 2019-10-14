@@ -1,0 +1,31 @@
+---
+packages:
+- name: IIS-ManagementConsole
+  provider: winfeature
+- name: RSAT
+  provider: DISM
+  source: c:\windows|sources\winsxs
+- name: RSAT
+  provider: windowsfeatures
+- name: ActiveDirectory-PowerShell
+  provider: dism
+- name: RSAT-AD-Tools-Feature
+  provider: dism
+- name: ServerManager-Core-RSAT
+  provider: dism
+- name: RSAT-Hyper-V-Tools-Feature
+  provider: dism
+- name: powershell-core
+  provider: choco
+- name: notepadplusplus.install
+  provider: choco
+- name: git.install
+  provider: choco
+- name: vscode
+  provider: choco
+- name: docker-desktop
+  provider: choco
+- name: 7zip
+  provider: scoop
+- name: treesizefree
+  provider: choco

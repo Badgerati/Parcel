@@ -19,11 +19,11 @@ class ParcelProvider
     }
 
     # implemented base functions
-    [ParcelStatus] InstallProvider([bool]$_dryRun)
+    [ParcelStatus] InstallProvider([hashtable]$_context, [bool]$_dryRun)
     {
         # get the scriptblock and invoke it
         if (!$_dryRun) {
-            Invoke-Command -ScriptBlock ($this.GetInstallProviderScriptBlock()) -ErrorAction Stop | Out-Null
+            Invoke-Command -ScriptBlock ($this.GetProviderInstallScriptBlock($_context)) -ErrorAction Stop | Out-Null
         }
 
         # changed
@@ -36,6 +36,11 @@ class ParcelProvider
         $status = $_package.TestPackage($_context)
         if ($null -ne $status) {
             return $status
+        }
+
+        # check if the provider is installed
+        if (!$this.TestProviderInstalled($_context)) {
+            throw "The $($this.Name) provider is not installed"
         }
 
         # do nothing if package is already installed
@@ -51,18 +56,28 @@ class ParcelProvider
 
         try {
             # get install script - adding args, version and source
-            $_script = $this.GetPackageInstallScript($_package)
+            $_script = $this.GetPackageInstallScript($_package, $_context)
             $_script += " $($_package.Arguments.Install)"
             $_script += " $($this.Arguments.Install)"
 
-            $_version = $this.GetVersionArgument($_package)
-            if (![string]::IsNullOrWhiteSpace($_version) -and !$_script.Contains($_version)) {
-                $_script += " $($_version)"
+            if ($_script -ilike '*@PARCEL_NO_VERSION*') {
+                $_script = $_script -ireplace '\@PARCEL_NO_VERSION', ''
+            }
+            else {
+                $_version = $this.GetVersionArgument($_package)
+                if (![string]::IsNullOrWhiteSpace($_version) -and !$_script.Contains($_version)) {
+                    $_script += " $($_version)"
+                }
             }
 
-            $_source = $this.GetSourceArgument($_package)
-            if (![string]::IsNullOrWhiteSpace($_source) -and !$_script.Contains($_source)) {
-                $_script += " $($_source)"
+            if ($_script -ilike '*@PARCEL_NO_SOURCE*') {
+                $_script = $_script -ireplace '\@PARCEL_NO_SOURCE', ''
+            }
+            else {
+                $_source = $this.GetSourceArgument($_package)
+                if (![string]::IsNullOrWhiteSpace($_source) -and !$_script.Contains($_source)) {
+                    $_script += " $($_source)"
+                }
             }
 
             Write-Verbose $_script
@@ -94,6 +109,11 @@ class ParcelProvider
 
     [ParcelStatus] Uninstall([ParcelPackage]$_package, [hashtable]$_context, [bool]$_dryRun)
     {
+        # check if the provider is installed
+        if (!$this.TestProviderInstalled($_context)) {
+            throw "The $($this.Name) provider is not installed"
+        }
+
         # check if package is valid
         $status = $_package.TestPackage($_context)
         if ($null -ne $status) {
@@ -113,7 +133,7 @@ class ParcelProvider
 
         try {
             # get uninstall script - adding args
-            $_script = $this.GetPackageUninstallScript($_package)
+            $_script = $this.GetPackageUninstallScript($_package, $_context)
             $_script += " $($_package.Arguments.Uninstall)"
             $_script += " $($this.Arguments.Uninstall)"
 
@@ -160,7 +180,16 @@ class ParcelProvider
             $_latestFlag = ' <latest>'
         }
 
-        return "$($_package.Name.ToUpperInvariant()) [v$($_package.Version)$($_latestFlag) - $($this.Name)]"
+        $_version = [string]::Empty
+        if (![string]::IsNullOrWhiteSpace($_package.Version) -and ($_package.Version -ine 'latest')) {
+            $_version = "v$($_package.Version)"
+        }
+
+        if ([string]::IsNullOrWhiteSpace($_version)) {
+            $_latestFlag = $_latestFlag.Trim()
+        }
+
+        return "$($_package.Name.ToUpperInvariant()) [$($_version)$($_latestFlag) - $($this.Name)]"
     }
 
     [bool] TestPackageUninstalled([ParcelPackage]$_package)
@@ -214,7 +243,7 @@ class ParcelProvider
             $_script = $this.GetProviderAddSourceScript($_source.name, $_source.url)
             Write-Verbose $_script
 
-            if (!$_dryRun) {
+            if (![string]::IsNullOrWhiteSpace($_script) -and !$_dryRun) {
                 if ($this.RunAsPowerShell) {
                     $output = Invoke-ParcelPowershell -Command $_script
                 }
@@ -250,7 +279,7 @@ class ParcelProvider
             $_script = $this.GetProviderRemoveSourceScript($_source.name)
             Write-Verbose $_script
 
-            if (!$_dryRun) {
+            if (![string]::IsNullOrWhiteSpace($_script) -and !$_dryRun) {
                 if ($this.RunAsPowerShell) {
                     $output = Invoke-ParcelPowershell -Command $_script
                 }
@@ -276,7 +305,7 @@ class ParcelProvider
 
 
     # unimplemented base functions
-    [bool] TestProviderInstalled()
+    [bool] TestProviderInstalled([hashtable]$_context)
     {
         return $true
     }
@@ -296,15 +325,33 @@ class ParcelProvider
         return [string]::Empty
     }
 
-    [scriptblock] GetProviderInstallScriptBlock() { throw [System.NotImplementedException]::new() }
+    [scriptblock] GetProviderInstallScriptBlock([hashtable]$_context)
+    {
+        throw [System.NotImplementedException]::new("GetProviderInstallScriptBlock ($($this.Name))")
+    }
 
-    [string] GetPackageInstallScript([ParcelPackage]$_package) { throw [System.NotImplementedException]::new() }
+    [string] GetPackageInstallScript([ParcelPackage]$_package, [hashtable]$_context)
+    {
+        throw [System.NotImplementedException]::new("GetPackageInstallScript ($($this.Name))")
+    }
 
-    [string] GetPackageUninstallScript([ParcelPackage]$_package) { throw [System.NotImplementedException]::new() }
+    [string] GetPackageUninstallScript([ParcelPackage]$_package, [hashtable]$_context)
+    {
+        throw [System.NotImplementedException]::new("GetPackageUninstallScript ($($this.Name))")
+    }
 
-    [bool] TestPackageInstalled([ParcelPackage]$_package) { throw [System.NotImplementedException]::new() }
+    [bool] TestPackageInstalled([ParcelPackage]$_package)
+    {
+        throw [System.NotImplementedException]::new("TestPackageInstalled ($($this.Name))")
+    }
 
-    [string] GetProviderAddSourceScript([string]$_name, [string]$_url) { throw [System.NotImplementedException]::new() }
+    [string] GetProviderAddSourceScript([string]$_name, [string]$_url)
+    {
+        throw [System.NotImplementedException]::new("GetProviderAddSourceScript ($($this.Name))")
+    }
 
-    [string] GetProviderRemoveSourceScript([string]$_name, [string]$_url) { throw [System.NotImplementedException]::new() }
+    [string] GetProviderRemoveSourceScript([string]$_name, [string]$_url)
+    {
+        throw [System.NotImplementedException]::new("GetProviderRemoveSourceScript ($($this.Name))")
+    }
 }

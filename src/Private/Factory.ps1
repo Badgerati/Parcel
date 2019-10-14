@@ -58,7 +58,21 @@ function ConvertTo-ParcelPackages
 
     # convert each package to a parcel provider
     $Packages | ForEach-Object {
-        ConvertTo-ParcelPackage -Package $_ -Context $Context
+        $_p = $_
+
+        if ([string]::IsNullOrWhiteSpace($_p.name) -and ($_p.names.Length -gt 0)) {
+            if (![string]::IsNullOrWhiteSpace($_p.version) -and ($_p.version -ine 'latest')) {
+                throw "Supplying a version with multiple package names is not supported"
+            }
+
+            $_p.names | ForEach-Object {
+                $_p.name = $_
+                ConvertTo-ParcelPackage -Package $_p -Context $Context
+            }
+        }
+        else {
+            ConvertTo-ParcelPackage -Package $_p -Context $Context
+        }
     }
 }
 
@@ -179,7 +193,7 @@ function Get-ParcelContext
     # set environment
     $ctx.environment = $Environment
     if ([string]::IsNullOrWhiteSpace($ctx.environment)) {
-        $ctx.environment = 'none'
+        $ctx.environment = 'all'
     }
 
     # return the context
@@ -228,7 +242,7 @@ function Invoke-ParcelPackages
     }
 
     # check if we need to install any providers
-    $stats.Install += [ParcelFactory]::Instance().InstallProviders($WhatIf)
+    $stats.Install += [ParcelFactory]::Instance().InstallProviders($Context, $WhatIf)
 
     # setup any provider details, like sources
     Initialize-ParcelProviders -Providers $Providers -WhatIf:$WhatIf
@@ -309,9 +323,11 @@ function Invoke-ParcelPackages
         $result.WriteStatusMessage($WhatIf)
         Write-Host ([string]::Empty)
 
-        # refresh the environment and path
-        Update-ParcelEnvironmentVariables -WhatIf:$WhatIf
-        Update-ParcelEnvironmentPath -WhatIf:$WhatIf
+        # refresh the environment and path - for windows
+        if ($Context.os.type -ieq 'windows') {
+            Update-ParcelEnvironmentVariables -WhatIf:$WhatIf
+            Update-ParcelEnvironmentPath -WhatIf:$WhatIf
+        }
     }
 
     # invoke any global post install/uninstall
@@ -461,9 +477,10 @@ function Update-ParcelEnvironmentVariables
 
 function Test-ParcelAdminUser
 {
-    # check the current platform, if it's unix then return true
+    # check the current platform, if it's unix then check sudo
     if ($PSVersionTable.Platform -ieq 'unix') {
-        return $true
+        Invoke-Expression -Command 'sudo -n true 2>&1' | Out-Null
+        return ($LASTEXITCODE -eq 0)
     }
 
     try {

@@ -11,7 +11,7 @@
     RootModule = 'Parcel.psm1'
 
     # Version number of this module.
-    ModuleVersion = '0.1.0'
+    ModuleVersion = '0.2.0'
 
     # ID used to uniquely identify this module
     GUID = 'f9c84a02-ce1a-4512-be6e-18cb5bd9a803'

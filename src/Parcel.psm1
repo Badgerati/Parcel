@@ -29,9 +29,15 @@ $classes = @(
     "$($root)/Classes/ParcelArguments.ps1",
     "$($root)/Classes/ParcelPackage.ps1",
     "$($root)/Classes/Providers/ParcelProvider.ps1",
-    "$($root)/Classes/Providers/ChocoProvider.ps1",
-    "$($root)/Classes/Providers/PSGalleryProvider.ps1",
-    "$($root)/Classes/Providers/ScoopProvider.ps1",
+    "$($root)/Classes/Providers/ChocoParcelProvider.ps1",
+    "$($root)/Classes/Providers/PSGalleryParcelProvider.ps1",
+    "$($root)/Classes/Providers/ScoopParcelProvider.ps1",
+    "$($root)/Classes/Providers/BrewParcelProvider.ps1",
+    "$($root)/Classes/Providers/DockerParcelProvider.ps1",
+    "$($root)/Classes/Providers/WindowsFeatureParcelProvider.ps1",
+    "$($root)/Classes/Providers/WindowsDISMParcelProvider.ps1",
+    "$($root)/Classes/Providers/AptGetParcelProvider.ps1",
+    "$($root)/Classes/Providers/YumParcelProvider.ps1",
     "$($root)/Classes/ParcelFactory.ps1"
 )
 

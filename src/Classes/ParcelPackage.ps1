@@ -2,7 +2,7 @@ class ParcelPackage
 {
     [string] $Name
     [string] $ProviderName
-    [string] $Source
+    [string[]] $Source
     [ParcelArguments] $Arguments
 
     [string] $Version
@@ -10,58 +10,58 @@ class ParcelPackage
 
     [ParcelEnsureType] $Ensure
     [string] $When
-    [string] $Environment
+    [string[]] $Environment
     [ParcelOSType] $OS
 
     [ParcelScripts] $Scripts
 
     # base constructor
-    ParcelPackage([hashtable]$package)
+    ParcelPackage([hashtable]$_package)
     {
         # fail on no name
-        if ([string]::IsNullOrWhiteSpace($package.name)) {
-            throw "No name supplied for $($package.provider) package"
+        if ([string]::IsNullOrWhiteSpace($_package.name)) {
+            throw "No name supplied for $($_package.provider) package"
         }
 
         # set ensure to default
-        if ([string]::IsNullOrWhiteSpace($package.ensure)) {
-            $package.ensure = 'neutral'
+        if ([string]::IsNullOrWhiteSpace($_package.ensure)) {
+            $_package.ensure = 'neutral'
         }
 
         # set environment to default
-        if ([string]::IsNullOrWhiteSpace($package.environment)) {
-            $package.environment = 'none'
+        if ([string]::IsNullOrWhiteSpace($_package.environment)) {
+            $_package.environment = @('all')
         }
 
         # set os to default
-        if ([string]::IsNullOrWhiteSpace($package.os)) {
-            $package.os = 'all'
+        if ([string]::IsNullOrWhiteSpace($_package.os)) {
+            $_package.os = 'all'
         }
 
         # if version is empty, assume latest
-        if ([string]::IsNullOrWhiteSpace($package.version)) {
-            $package.version = 'latest'
+        if ([string]::IsNullOrWhiteSpace($_package.version)) {
+            $_package.version = 'latest'
         }
 
         # are we using the latest version?
-        if ([string]::IsNullOrWhiteSpace($package.version) -or ($package.version -ieq 'latest')) {
+        if ([string]::IsNullOrWhiteSpace($_package.version) -or ($_package.version -ieq 'latest')) {
             $this.IsLatest = $true
         }
 
         # set the properties
-        $this.Name = $package.name
-        $this.Version = $package.version
-        $this.ProviderName = $package.provider
-        $this.Source = $package.source
-        $this.Arguments = [ParcelArguments]::new($package.args)
+        $this.Name = $_package.name
+        $this.Version = $_package.version
+        $this.ProviderName = $_package.provider
+        $this.Source = $_package.source
+        $this.Arguments = [ParcelArguments]::new($_package.args)
 
-        $this.Ensure = [ParcelEnsureType]$package.ensure
-        $this.OS = $package.os
-        $this.Environment = $package.environment
-        $this.When = $package.when
+        $this.Ensure = [ParcelEnsureType]$_package.ensure
+        $this.OS = $_package.os
+        $this.Environment = @($_package.environment)
+        $this.When = $_package.when
 
         # set the scripts
-        $this.Scripts = [ParcelScripts]::new($package.pre, $package.post)
+        $this.Scripts = [ParcelScripts]::new($_package.pre, $_package.post)
     }
 
     [ParcelStatus] TestPackage([hashtable]$_context)
@@ -89,20 +89,16 @@ class ParcelPackage
 
     [ParcelStatus] TestEnvironment([string]$_environment)
     {
-        if ([string]::IsNullOrWhiteSpace($_environment) -or ('none' -ieq $_environment)) {
+        if (($this.Environment.Length -eq 0) -or ($this.Environment.Length -eq 1 -and $this.Environment[0] -ieq 'all')) {
             return $null
         }
 
-        if ([string]::IsNullOrWhiteSpace($this.Environment) -or ('none' -ieq $this.Environment)) {
-            return $null
-        }
-
-        $valid = ($_environment -ieq $this.Environment)
+        $valid = ($this.Environment -icontains $_environment)
         if ($valid) {
             return $null
         }
 
-        return [ParcelStatus]::new('Skipped', "Wrong environment [$($this.Environment) =/= $($_environment)]")
+        return [ParcelStatus]::new('Skipped', "Wrong environment [$($this.Environment -join ', ') =/= $($_environment)]")
     }
 
     [ParcelStatus] TestOS([string]$_os)

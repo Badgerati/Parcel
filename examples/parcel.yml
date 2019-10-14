@@ -1,8 +1,8 @@
 ---
 packages:
 - name: 7zip.install
-  #provider: choco
-  provider: scoop
+  provider: choco
+  #provider: scoop
   version: 19.0
   #os: linux
   #when: ($parcel.os.type -eq 'linux')
@@ -14,3 +14,6 @@ packages:
 - name: pester
   provider: psgallery
   version: 4.8.1
+  environment:
+  - developer
+  - devops
